@@ -1,0 +1,182 @@
+@using Zuschnitt.Models;
+
+<FluentLayout Style="margin-top: 10px;">
+    <FluentSlider Orientation=Orientation.Horizontal Min="0" Max="1" Step="0.01" @bind-Value=Project.ScaleFactor></FluentSlider>
+    <FluentHeader>
+        @if (Project.Editing)
+        {
+            <FluentTextField @bind-Value=Project.Name Appearance="FluentInputAppearance.Outline" Style="width: 200px;"></FluentTextField>
+            <FluentSpacer Width="5"/>
+            <FluentButton IconStart="@(new Icons.Regular.Size28.Add())" @onclick="AddSheet">Add Sheet</FluentButton>
+            <FluentSpacer/>
+            <FluentButton IconStart="@(new Icons.Regular.Size28.Checkmark())" @onclick="() => Project.Editing = false"></FluentButton>
+        }
+        else
+        {
+            @Project.Name
+            <FluentSpacer/>
+            <FluentButton IconStart="@(new Icons.Regular.Size28.Edit())" @onclick="() => Project.Editing = true"></FluentButton>
+        }
+    </FluentHeader>
+    @{
+        foreach (var sheet in Project.Sheets)
+        {
+            <FluentStack Orientation="Orientation.Horizontal" VerticalAlignment="VerticalAlignment.Center" Style="background-color: #e0e0e0; padding: 10px;">
+                @if (@Project.Editing)
+                {
+                    <FluentButton IconStart="@(new Icons.Regular.Size28.Delete())" @onclick="() => DeleteSheet(sheet)" Appearance="Appearance.Lightweight"></FluentButton>
+                    <FluentTextField @bind-Value=sheet.Name Appearance="FluentInputAppearance.Outline" Style="width: 200px;"></FluentTextField>
+                    <FluentNumberField @bind-Value=sheet.Width Appearance="FluentInputAppearance.Outline" Style="width: 80px;"></FluentNumberField>
+                    <FluentNumberField @bind-Value=sheet.Height Appearance="FluentInputAppearance.Outline" Style="width: 80px;"></FluentNumberField>
+                    <FluentTextField @bind-Value=sheet.Color Appearance="FluentInputAppearance.Outline"></FluentTextField>
+                    <FluentTextField @bind-Value=sheet.FillColor Appearance="FluentInputAppearance.Outline"></FluentTextField>
+                    <FluentButton IconStart="@(new Icons.Regular.Size28.Add())" @onclick="() => AddColumn(sheet)"></FluentButton>
+                }
+                else
+                {
+                    <FluentLabel Typo="Typography.Body">@sheet.Name (@sheet.Width/@sheet.Height)</FluentLabel>
+                }
+            </FluentStack>
+            foreach (var column in sheet.Columns)
+            {
+                <FluentStack Orientation="Orientation.Horizontal" VerticalAlignment="VerticalAlignment.Center" Style="background-color: #f0f0f0; padding: 10px;">
+                    @if (@Project.Editing)
+                    {
+                        <FluentButton IconStart="@(new Icons.Regular.Size28.Delete())" @onclick="() => DeleteColumn(sheet, column)"></FluentButton>
+                        <FluentLabel Typo="Typography.Body" Style="width: 150px;">#@(sheet.Columns.IndexOf(@column)+1) (@column.Width()/@column.Height())</FluentLabel>
+                        <FluentTextField @bind-Value=column.Color></FluentTextField>
+                        <FluentTextField @bind-Value=column.FillColor></FluentTextField>
+                        <FluentButton IconStart="@(new Icons.Regular.Size28.Add())" @onclick="() => AddPart(column)"></FluentButton>
+                    }
+                    else
+                    {
+                        <FluentLabel Typo="Typography.Body">#@(sheet.Columns.IndexOf(@column)+1) (@column.Width()/@column.Height())</FluentLabel>
+                    }
+                </FluentStack>
+                foreach (var part in column.Parts)
+                {
+                    @if (Project.Editing)
+                    {
+                        <FluentStack Orientation="Orientation.Horizontal" VerticalAlignment="VerticalAlignment.Center" Style="padding: 10px;">
+                            <FluentButton IconStart="@(new Icons.Regular.Size28.Delete())" @onclick="() => DeletePart(column, part)"></FluentButton>
+                            <FluentTextField @bind-Value=part.Name Style="width: 200px;"></FluentTextField>
+                            <FluentNumberField @bind-Value=part.Width Style="width: 80px;"></FluentNumberField>
+                            <FluentNumberField @bind-Value=part.Height Style="width: 80px;"></FluentNumberField>
+                            <FluentTextField @bind-Value=part.Color></FluentTextField>
+                            <FluentTextField @bind-Value=part.FillColor></FluentTextField>
+                        </FluentStack>
+                    }
+                    else
+                    {
+                        <FluentStack Orientation="Orientation.Horizontal" Style="margin: 2px;">
+                            <FluentTextField @bind-Value=part.Name Style="width: 200px;"></FluentTextField>
+                            <FluentNumberField @bind-Value=part.Width Style="width: 80px;"></FluentNumberField>
+                            <FluentNumberField @bind-Value=part.Height Style="width: 80px;"></FluentNumberField>
+                        </FluentStack>
+                    }
+                }
+            }
+        }
+    }
+
+    <div style="transform-origin: top left; transform: scale(@Project.ScaleFactor);">
+        <div style="transform-origin center; transform: rotate(0deg);">
+            @foreach (var sheet in Project.Sheets)
+            {
+                <svg width="@(Margin+sheet.Width)" height="@(Margin+sheet.Height)">
+                    <rect id="@sheet.Id.ToString()" x="@(Margin/2)" y="@(Margin/2)" width="@sheet.Width" height="@sheet.Height" stroke="@sheet.Color" stroke-width="1" fill="@sheet.FillColor" @onclick="() => Clicked(sheet.Id)" />
+                    @{
+                        int x = Margin/2;
+                        foreach (var column in sheet.Columns)
+                        {
+                            <rect id="@column.Id.ToString()" x="@x" y="@(Margin/2)" width="@column.Width()" height="@sheet.Height" stroke="@column.Color" stroke-width="1" fill="@column.FillColor" fill-opacity="@column.FillOpacity() "@onmouseleave="() => column.Hightlighted = false" @onmouseenter="() => column.Hightlighted = true" @onclick="() => column.Editing = true"/>
+                            int y = Margin/2;
+                            foreach (var part in column.Parts)
+                            {
+                                <rect id="@part.Id.ToString()" x="@x" y="@y" width="@part.Width" height="@part.Height" stroke="@part.Color" stroke-width="1" fill="@part.FillColor" fill-opacity="@part.FillOpacity()" @onmouseleave="() => part.Hightlighted = false" @onmouseenter="() => part.Hightlighted = true" @onclick="() => part.Editing = true" @oncontextmenu="() => part.Editing = true" @oncontextmenu:preventDefault="true"/>
+                                y += part.Height;
+                            }
+                            x += column.Width();
+                        }
+                    }
+                </svg>
+            }
+        </div>
+    </div>
+
+    @foreach (var sheet in Project.Sheets)
+    {
+        @foreach (var column in sheet.Columns)
+        {
+            <FluentPopover Style="width: 300px;" @bind-Open="column.Editing" AnchorId="@column.Id.ToString()">
+                <Header>Move to Sheet</Header>
+                <Body>
+                    <FluentCombobox TOption="Sheet" Items="Project.Sheets" OptionText="@(s => s.Name)" OptionSelected="@(s => s.Columns.Contains(column))" SelectedOptionChanged="@(s => Reassign(column, sheet, s))"></FluentCombobox>
+                </Body>
+            </FluentPopover>
+            @foreach (var part in column.Parts)
+            {
+                <FluentPopover Style="width: 300px;" @bind-Open="part.Editing" AnchorId="@part.Id.ToString()">
+                    <Header>Move to Column</Header>
+                    <Body>
+                        <FluentCombobox TOption="Column" Label="Column" Items="sheet.Columns" OptionText="@(c => $"#{sheet.Columns.IndexOf(c)+1}")" OptionSelected="@(c => c.Parts.Contains(part))" SelectedOptionChanged="@(c => Reassign(part, column, c))"></FluentCombobox>
+                    </Body>
+                </FluentPopover>
+            }
+        }
+    }
+</FluentLayout>
+
+@code {
+    [Parameter]
+    public Project Project { get; set; }
+    private int Margin = 10;
+    
+    private void AddSheet()
+    {
+        Project.Sheets.Add(new Sheet());
+    }
+
+    private void DeleteSheet(Sheet sheet)
+    {
+        Project.Sheets.Remove(sheet);
+    }
+
+    private void AddColumn(Sheet sheet)
+    {
+        sheet.Columns.Add(new Column());
+    }
+
+    private void DeleteColumn(Sheet sheet, Column column)
+    {
+        sheet.Columns.Remove(column);
+    }
+
+    private void AddPart(Column column)
+    {
+        column.Parts.Add(new Part());
+        StateHasChanged();
+    }
+
+    private void DeletePart(Column column, Part part)
+    {
+        column.Parts.Remove(part);
+    }
+
+    private void Clicked(Guid id)
+    {
+    }
+    private void Reassign(Part part, Column currentColumn, Column newColumn)
+    {
+        if (newColumn.Parts.Contains(part)) return;
+        currentColumn.Parts.Remove(part);
+        newColumn.Parts.Add(part);
+    }
+
+    private void Reassign(Column column, Sheet currentSheet, Sheet newSheet)
+    {
+        if (newSheet.Columns.Contains(column)) return;
+        currentSheet.Columns.Remove(column);
+        newSheet.Columns.Add(column);
+    }
+}

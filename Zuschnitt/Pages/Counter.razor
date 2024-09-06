@@ -1,18 +1,21 @@
 ﻿@page "/counter"
 
-<PageTitle>Counter</PageTitle>
+@inject AppState appState;
 
-<h1>Counter</h1>
-
-<p role="status">Current count: <FluentBadge Appearance="Appearance.Neutral">@currentCount</FluentBadge></p>
-
-<FluentButton Appearance="Appearance.Accent" @onclick="IncrementCount">Click me</FluentButton>
+<textarea @bind="json" style="width: 1200px; height: 1000px;"></textarea><br/>
+<FluentButton IconStart="@(new Icons.Regular.Size28.ArrowDownload())" @onclick="Save"></FluentButton>
+<FluentButton IconStart="@(new Icons.Regular.Size28.Open())" @onclick="Restore"></FluentButton>
 
 @code {
-    private int currentCount = 0;
+    private string json = "";
 
-    private void IncrementCount()
+    private void Save()
     {
-        currentCount++;
+        json = appState.Serialize();
+    }
+
+    private void Restore()
+    {
+        appState.Deserialize(json);
     }
 }
