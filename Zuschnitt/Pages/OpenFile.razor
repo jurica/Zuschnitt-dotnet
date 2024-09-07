@@ -1,0 +1,72 @@
+@page "/openfile"
+
+@using System.Text.Json
+@using Zuschnitt.Models
+
+@inject AppState appState
+@inject NavigationManager navMan
+@inject IJSRuntime js
+
+
+<FluentInputFile @ref="@inputFile"
+    DragDropZoneVisible="false"
+    Mode="InputFileMode.SaveToTemporaryFolder"
+    Multiple="false"
+    MaximumFileSize="@(20 * 1024)"
+    AnchorId="SelectFileButton"
+    Accept=".zsn, .json"
+    OnProgressChange="@(e =>
+        {
+            progressPercent = e.ProgressPercent; 
+            progressTitle = e.ProgressTitle;
+        })"
+    OnCompleted="@OnCompleted" />
+
+<FluentProgress Min="0" Max="100" Visible="@(progressPercent > 0)" Value="@progressPercent" />
+<FluentLabel Alignment="HorizontalAlignment.Center">
+    @progressTitle
+</FluentLabel>
+
+<FluentButton Id="SelectFileButton" Appearance="Appearance.Accent">Select File</FluentButton>
+
+@code
+{
+    FluentInputFile? inputFile = default!;
+    int? progressPercent;
+    string? progressTitle;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            inputFile.ShowFilesDialogAsync();
+        }
+    }
+
+    void Deserialize(FileStream stream)
+    {
+        var p = JsonSerializer.Deserialize<Project>(stream);
+        if (p != null)
+        {
+            appState.Project = p;
+        }
+    }
+
+    void OnCompleted(IEnumerable<FluentInputFileEventArgs> files)
+    {
+        progressPercent = inputFile!.ProgressPercent;
+        progressTitle = inputFile!.ProgressTitle;
+
+        foreach (var file in files)
+        {
+            if (files.FirstOrDefault() == file)
+            {
+                var stream = file.LocalFile?.OpenRead();
+                Deserialize(stream);
+                stream.Close();
+            }
+            file.LocalFile?.Delete();
+        }
+        navMan.NavigateTo("/");
+    }
+}

@@ -1,14 +1,31 @@
-﻿<div class="navmenu">
+﻿@using System.Text.Json
+
+@inject AppState appState
+@inject NavigationManager navMan
+@inject IJSRuntime js
+
+<div class="navmenu">
     <input type="checkbox" title="Menu expand/collapse toggle" id="navmenu-toggle" class="navmenu-icon" />
     <label for="navmenu-toggle" class="navmenu-icon"><FluentIcon Value="@(new Icons.Regular.Size20.Navigation())" Color="Color.Fill" /></label>
     <nav class="sitenav" aria-labelledby="main-menu">
-        <FluentNavMenu Id="main-menu" Width="250" Collapsible="true" Title="Navigation menu" @bind-Expanded="expanded" CustomToggle="true">
+        <FluentNavMenu Id="main-menu" Width="250" Collapsible="true" Title="Navigation menu" Expanded="false" CustomToggle="true">
              <FluentNavLink Href="/" Match="NavLinkMatch.All" Icon="@(new Icons.Regular.Size20.Home())" IconColor="Color.Accent">Home</FluentNavLink>
-             <FluentNavLink Href="counter" Icon="@(new Icons.Regular.Size20.NumberSymbolSquare())" IconColor="Color.Accent">Save/Load</FluentNavLink>
+             <FluentNavLink Href="openfile" Icon="@(new Icons.Regular.Size20.DocumentArrowUp())" IconColor="Color.Accent">Open</FluentNavLink>
+             <FluentNavLink Icon="@(new Icons.Regular.Size20.Save())" IconColor="Color.Accent" OnClick="SaveAs">Save</FluentNavLink>
         </FluentNavMenu>
     </nav>
 </div>
 
-@code {
-    private bool expanded = false;
+@code
+{
+    void SaveAs()
+    {
+        string filename = "Zuschnitt";
+        if (!string.IsNullOrEmpty(appState.Project.Name)) filename = appState.Project.Name;
+        filename += ".zsn";
+        js.InvokeAsync<object>(
+        "saveAsFile",
+        filename,
+        System.Convert.ToBase64String(JsonSerializer.SerializeToUtf8Bytes(appState.Project)));
+    }
 }
