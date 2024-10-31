@@ -20,4 +20,16 @@ public class Sheet
         FillColor = "lightgrey";
         Columns = new ();
     }
+
+    public int UsedHeight()
+    {
+        if (Columns.Count == 0) return 0;
+        return Columns.Max(x => x.Height());
+    }
+
+    public int UsedWidth()
+    {
+        if (Columns.Count == 0) return 0;
+        return Columns.Sum(x => x.Width());
+    }
 }

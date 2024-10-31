@@ -9,7 +9,7 @@ public class Column
     public string FillColor { get; set; }
     public List<Part> Parts { get; set; }
     [JsonIgnore]
-    public bool Hightlighted { get; set; }
+    public bool Highlighted { get; set; }
     [JsonIgnore]
     public bool Editing { get; set; }
 
@@ -23,14 +23,16 @@ public class Column
 
     public int Height()
     {
-        if (Parts.Count() == 0) return 0;
-        return Parts.Sum(p => p.Height);
+        int result = 0;
+        if (Parts.Any()) result = Parts.Sum(p => p.Height);
+        return result;
     }
 
     public int Width()
     {
-        if (Parts.Count() == 0) return 0;
-        return Parts.Max(p => p.Width);
+        int result = 0;
+        if (Parts.Any()) result = Parts.Max(p => p.Width);
+        return result;
     }
 
     public void Reassign(Sheet currentSheet, Sheet newSheet)
@@ -41,7 +43,7 @@ public class Column
     
     public double FillOpacity()
     {
-        if (Hightlighted) return 0.5;
-        return 0.01;
+        if (Highlighted) return 0.5;
+        return 0.1;
     }
 }
