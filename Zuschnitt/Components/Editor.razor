@@ -1,5 +1,7 @@
 @using Zuschnitt.Models;
 
+@inject AppState AppState;
+
 <FluentLayout Style="margin-top: 10px;">
     <FluentSlider Orientation=Orientation.Horizontal Min="0" Max="1" Step="0.01" @bind-Value=Project.ScaleFactor></FluentSlider>
     <FluentHeader>
@@ -80,7 +82,7 @@
     }
 
     <div style="transform-origin: top left; transform: scale(@Project.ScaleFactor);">
-        <div style="transform-origin center; transform: rotate(0deg);">
+        <div style="transform-origin: center; transform: rotate(0deg);">
             @foreach (var sheet in Project.Sheets)
             {
                 <svg width="@(Margin+sheet.Width)" height="@(Margin+sheet.Height)">
@@ -89,11 +91,11 @@
                         int x = Margin/2;
                         foreach (var column in sheet.Columns)
                         {
-                            <rect id="@column.Id.ToString()" x="@x" y="@(Margin/2)" width="@column.Width()" height="@sheet.Height" stroke="@column.Color" stroke-width="1" fill="@column.FillColor" fill-opacity="@column.FillOpacity() "@onmouseleave="() => column.Hightlighted = false" @onmouseenter="() => column.Hightlighted = true" @onclick="() => column.Editing = true"/>
+                            <rect id="@column.Id.ToString()" x="@x" y="@(Margin/2)" width="@column.Width()" height="@sheet.Height" stroke="@column.Color" stroke-width="1" fill="@column.FillColor" fill-opacity="@column.FillOpacity()" @onmouseleave="() => column.Highlighted = false" @onmouseenter="() => column.Highlighted = true" @onclick="() => column.Editing = true"/>
                             int y = Margin/2;
                             foreach (var part in column.Parts)
                             {
-                                <rect id="@part.Id.ToString()" x="@x" y="@y" width="@part.Width" height="@part.Height" stroke="@part.Color" stroke-width="1" fill="@part.FillColor" fill-opacity="@part.FillOpacity()" @onmouseleave="() => part.Hightlighted = false" @onmouseenter="() => part.Hightlighted = true" @onclick="() => part.Editing = true" @oncontextmenu="() => part.Editing = true" @oncontextmenu:preventDefault="true"/>
+                                <rect id="@part.Id.ToString()" x="@x" y="@y" width="@part.Width" height="@part.Height" stroke="@part.Color" stroke-width="1" fill="@part.FillColor" fill-opacity="@part.FillOpacity()" @onmouseleave="() => part.Highlighted = false" @onmouseenter="() => part.Highlighted = true" @onclick="() => part.Editing = true" @oncontextmenu="() => part.Editing = true" @oncontextmenu:preventDefault="true"/>
                                 y += part.Height;
                             }
                             x += column.Width();
@@ -128,8 +130,11 @@
 </FluentLayout>
 
 @code {
-    [Parameter]
-    public Project Project { get; set; }
+    public Project Project
+    {
+        get => AppState.Project;
+    }
+    
     private int Margin = 10;
     
     private void AddSheet()

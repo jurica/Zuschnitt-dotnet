@@ -13,7 +13,7 @@ public class Sheet
     public Sheet()
     {
         Id = Guid.NewGuid();
-        Name = "";
+        Name = Id.ToString();
         Width = 1250;
         Height = 2500;
         Color = "black";

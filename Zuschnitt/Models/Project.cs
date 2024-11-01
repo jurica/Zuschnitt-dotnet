@@ -17,5 +17,7 @@ public class Project
         Name = "";
         Editing = false;
         ScaleFactor = 1.0;
+        
+        Sheets.Add(new Sheet());
     }
 }

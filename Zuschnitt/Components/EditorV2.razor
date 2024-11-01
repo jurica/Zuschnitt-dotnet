@@ -1,119 +1,83 @@
 @using Zuschnitt.Models;
 
-<FluentLayout Style="margin-top: 10px;">
-    <FluentSlider Orientation=Orientation.Horizontal Min="0" Max="1" Step="0.01" @bind-Value=Project.ScaleFactor></FluentSlider>
-    <FluentHeader>
-        @Project.Name
-        <FluentSpacer/>
-        <FluentButton IconStart="@(new Icons.Regular.Size28.Edit())" @onclick="() => Project.Editing = true"></FluentButton>
-    </FluentHeader>
-    <FluentTabs>
-        @{
-            foreach (var sheet in Project.Sheets)
-            {
-                <FluentTab Label="@sheet.Name" Id="@sheet.Name">
-                    <FluentButton IconStart="@(new Icons.Regular.Size28.Add())" @onclick="() => AddColumn(sheet)">Add Column</FluentButton>
-                    <FluentHorizontalScroll Style="--scroll-align: flex-start">
-                        @{
-                            foreach (var column in sheet.Columns)
-                            {
-                                <FluentCard @onmouseenter="() => column.Highlighted = true" @onmouseleave="() => column.Highlighted = false" MinimalStyle="true" Style="padding: 10px; width: 300px">
-                                    <FluentStack Orientation="Orientation.Vertical">
-                                        <FluentLabel Typo="Typography.H3">#@(sheet.Columns.IndexOf(@column)+1) (@column.Width()/@column.Height())</FluentLabel>
+@inject AppState AppState;
+
+<FluentSplitter Orientation="Orientation.Horizontal" style="width: 100%; height: 100%">
+    <Panel1>
+        <div Style="padding: 10px;">
+            <FluentStack Orientation="Orientation.Horizontal">
+            <FluentMenuButton Text="Select Sheet">
+                <FluentMenuItem @onclick="() => AddSheet()">New</FluentMenuItem>
+                @foreach (var sheet in AppState.Project.Sheets)
+                {
+                    <FluentMenuItem Disabled="@(sheet == AppState.CurrentSheet)" Id="@sheet.Id.ToString()" @onclick="() => SelectSheet(sheet)">@sheet.Name</FluentMenuItem>
+                }
+            </FluentMenuButton>
+                <FluentSpacer/>
+                <FluentButton IconStart="@(new Icons.Regular.Size28.Add())" @onclick="() => AddColumn()" Style="horiz-align: center">Add Column</FluentButton>
+            </FluentStack>
+            <FluentCard MinimalStyle="true" Style="padding: 5px; margin-top: 10px; margin-bottom: 10px">
+                <FluentTextField @bind-Value=AppState.CurrentSheet.Name Style="width: 100%"></FluentTextField>
+                <FluentStack Orientation="Orientation.Horizontal">
+                    <FluentNumberField @bind-Value=AppState.CurrentSheet.Width Style="width: 50%;"></FluentNumberField>
+                    <FluentNumberField @bind-Value=AppState.CurrentSheet.Height Style="width: 50%;"></FluentNumberField>
+                    <FluentButton IconStart="@(new Icons.Regular.Size28.Delete())" @onclick="() => DeleteCurrentSheet()"></FluentButton>
+                </FluentStack>
+            </FluentCard>
+            <SheetSVG Sheet="AppState.CurrentSheet"/>
+        </div>
+    </Panel1>
+    <Panel2>
+        <FluentHorizontalScroll Style="--scroll-align: flex-start; padding: 10px">
+            @{
+                foreach (var column in AppState.CurrentSheet.Columns)
+                {
+                    <FluentCard @onmouseenter="() => column.Highlighted = true" @onmouseleave="() => column.Highlighted = false" MinimalStyle="true" Style="padding: 10px; width: 300px">
+                        <FluentStack Orientation="Orientation.Vertical">
+                            <FluentLabel Typo="Typography.H3">#@(AppState.CurrentSheet.Columns.IndexOf(@column) + 1) (@column.Width()/@column.Height())</FluentLabel>
+                            <FluentStack Orientation="Orientation.Horizontal">
+                                <ColumnActions Column="column"/>
+                                <FluentSpacer/>
+                                <FluentButton IconStart="@(new Icons.Regular.Size28.Add())" @onclick="() => AddPart(column)" Style="horiz-align: center">Add Part</FluentButton>
+                            </FluentStack>
+                            @{
+                                foreach (var part in column.Parts)
+                                {
+                                    <FluentCard MinimalStyle="true" Style="padding: 5px;" @onmouseenter="() => part.Highlighted = true" @onmouseleave="() => part.Highlighted = false">
+                                        <FluentTextField @bind-Value=part.Name Style="width: 100%"></FluentTextField>
                                         <FluentStack Orientation="Orientation.Horizontal">
-                                            <FluentButton IconStart="@(new Icons.Regular.Size28.Add())" @onclick="() => AddPart(column)" Style="horiz-align: center">Add Part</FluentButton>
-                                            <FluentSpacer></FluentSpacer>
-                                            <FluentButton IconStart="@(new Icons.Regular.Size28.Delete())" @onclick="() => DeleteColumn(sheet, column)"></FluentButton>
+                                            <FluentNumberField @bind-Value=part.Width Style="width: 50%;"></FluentNumberField>
+                                            <FluentNumberField @bind-Value=part.Height Style="width: 50%;"></FluentNumberField>
+                                            <FluentButton IconStart="@(new Icons.Regular.Size28.Delete())" @onclick="() => DeletePart(column, part)"></FluentButton>
                                         </FluentStack>
-                                        @{
-                                            foreach (var part in column.Parts)
-                                            {
-                                                <div @onmouseenter="() => part.Highlighted = true" @onmouseleave="() => part.Highlighted = false">
-                                                    <FluentTextField @bind-Value=part.Name Style="width: 100%"></FluentTextField>
-                                                    <FluentStack Orientation="Orientation.Horizontal">
-                                                        <FluentNumberField @bind-Value=part.Width Style="width: 50%;"></FluentNumberField>
-                                                        <FluentNumberField @bind-Value=part.Height Style="width: 50%;"></FluentNumberField>
-                                                        <FluentButton IconStart="@(new Icons.Regular.Size28.Delete())" @onclick="() => DeletePart(column, part)"></FluentButton>
-                                                    </FluentStack>
-                                                </div>
-                                            }
-                                        }
-                                    </FluentStack>
-                                </FluentCard>
-                            }
-                        }
-                    </FluentHorizontalScroll>
-                    <div style="transform-origin: top left; transform: scale(@Project.ScaleFactor);">
-                        <div style="transform-origin: center; transform: rotate(0deg);">
-                            <svg width="@(Margin + sheet.Width)" height="@(Margin + sheet.Height)">
-                                <rect id="@sheet.Id.ToString()" x="@(Margin / 2)" y="@(Margin / 2)" width="@sheet.Width" height="@sheet.Height" stroke="@sheet.Color" stroke-width="1" fill="@sheet.FillColor" @onclick="() => Clicked(sheet.Id)"/>
-                                @{
-                                    int x = Margin / 2;
-                                    foreach (var column in sheet.Columns)
-                                    {
-                                        <rect id="@column.Id.ToString()" x="@x" y="@(Margin / 2)" width="@column.Width()" height="@sheet.Height" stroke="@column.Color" stroke-width="1" fill="@column.FillColor" fill-opacity="@column.FillOpacity()" @onmouseleave="() => column.Highlighted = false" @onmouseenter="() => column.Highlighted = true" @onclick="() => column.Editing = true"/>
-                                        int y = Margin / 2;
-                                        foreach (var part in column.Parts)
-                                        {
-                                            <rect id="@part.Id.ToString()" x="@x" y="@y" width="@part.Width" height="@part.Height" stroke="@part.Color" stroke-width="1" fill="@part.FillColor" fill-opacity="@part.FillOpacity()" @onmouseleave="() => part.Highlighted = false" @onmouseenter="() => part.Highlighted = true" @onclick="() => part.Editing = true" @oncontextmenu="() => part.Editing = true" @oncontextmenu:preventDefault="true"/>
-                                            y += part.Height;
-                                        }
-
-                                        x += column.Width();
-                                    }
+                                    </FluentCard>
                                 }
-                            </svg>
-                        </div>
-                    </div>
-                </FluentTab>
+                            }
+                        </FluentStack>
+                    </FluentCard>
+                }
             }
-        }
-    </FluentTabs>
-    @foreach (var sheet in Project.Sheets)
-    {
-        @foreach (var column in sheet.Columns)
-        {
-            <FluentPopover Style="width: 300px;" @bind-Open="column.Editing" AnchorId="@column.Id.ToString()">
-                <Header>Move to Sheet</Header>
-                <Body>
-                <FluentCombobox TOption="Sheet" Items="Project.Sheets" OptionText="@(s => s.Name)" OptionSelected="@(s => s.Columns.Contains(column))" SelectedOptionChanged="@(s => Reassign(column, sheet, s))"></FluentCombobox>
-                </Body>
-            </FluentPopover>
-            @foreach (var part in column.Parts)
-            {
-                <FluentPopover Style="width: 300px;" @bind-Open="part.Editing" AnchorId="@part.Id.ToString()">
-                    <Header>Move to Column</Header>
-                    <Body>
-                    <FluentCombobox TOption="Column" Label="Column" Items="sheet.Columns" OptionText="@(c => $"#{sheet.Columns.IndexOf(c) + 1}")" OptionSelected="@(c => c.Parts.Contains(part))" SelectedOptionChanged="@(c => Reassign(part, column, c))"></FluentCombobox>
-                    </Body>
-                </FluentPopover>
-            }
-        }
-    }
-</FluentLayout>
+        </FluentHorizontalScroll>
+    </Panel2>
+</FluentSplitter>
 
-@code {
-    [Parameter] public Project Project { get; set; }
-    private int Margin = 10;
+@code
+{
+    private void SelectSheet(Sheet sheet)
+    {
+        AppState.CurrentSheet = sheet;
+    }
 
     private void AddSheet()
     {
-        Project.Sheets.Add(new Sheet());
+        var sheet = new Sheet();
+        AppState.Project.Sheets.Add(sheet);
+        AppState.CurrentSheet = sheet;
     }
 
-    private void DeleteSheet(Sheet sheet)
+    private void AddColumn()
     {
-        Project.Sheets.Remove(sheet);
-    }
-
-    private void AddColumn(Sheet sheet)
-    {
-        sheet.Columns.Add(new Column());
-    }
-
-    private void DeleteColumn(Sheet sheet, Column column)
-    {
-        sheet.Columns.Remove(column);
+        AppState.CurrentSheet.Columns.Add(new Column());
     }
 
     private void AddPart(Column column)
@@ -127,22 +91,15 @@
         column.Parts.Remove(part);
     }
 
-    private void Clicked(Guid id)
+    private void DeleteCurrentSheet()
     {
-    }
+        AppState.Project.Sheets.Remove(AppState.CurrentSheet);
+        if (!AppState.Project.Sheets.Any())
+        {
+            AddSheet();
+            return;
+        }
 
-    private void Reassign(Part part, Column currentColumn, Column newColumn)
-    {
-        if (newColumn.Parts.Contains(part)) return;
-        currentColumn.Parts.Remove(part);
-        newColumn.Parts.Add(part);
+        AppState.CurrentSheet = AppState.Project.Sheets.First();
     }
-
-    private void Reassign(Column column, Sheet currentSheet, Sheet newSheet)
-    {
-        if (newSheet.Columns.Contains(column)) return;
-        currentSheet.Columns.Remove(column);
-        newSheet.Columns.Add(column);
-    }
-
 }
