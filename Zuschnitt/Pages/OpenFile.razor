@@ -3,12 +3,11 @@
 @using System.Text.Json
 @using Zuschnitt.Models
 
-@inject AppState appState
-@inject NavigationManager navMan
-@inject IJSRuntime js
+@inject AppState AppState
+@inject NavigationManager NavigationManager
 
 
-<FluentInputFile @ref="@inputFile"
+<FluentInputFile @ref="@_inputFile"
     DragDropZoneVisible="false"
     Mode="InputFileMode.SaveToTemporaryFolder"
     Multiple="false"
@@ -17,56 +16,64 @@
     Accept=".zsn, .json"
     OnProgressChange="@(e =>
         {
-            progressPercent = e.ProgressPercent; 
-            progressTitle = e.ProgressTitle;
+            _progressPercent = e.ProgressPercent; 
+            _progressTitle = e.ProgressTitle;
         })"
     OnCompleted="@OnCompleted" />
 
-<FluentProgress Min="0" Max="100" Visible="@(progressPercent > 0)" Value="@progressPercent" />
+<FluentProgress Min="0" Max="100" Visible="@(_progressPercent > 0)" Value="@_progressPercent" />
 <FluentLabel Alignment="HorizontalAlignment.Center">
-    @progressTitle
+    @_progressTitle
 </FluentLabel>
 
 <FluentButton Id="SelectFileButton" Appearance="Appearance.Accent">Select File</FluentButton>
 
 @code
 {
-    FluentInputFile? inputFile = default!;
-    int? progressPercent;
-    string? progressTitle;
+    FluentInputFile? _inputFile;
+    int? _progressPercent;
+    string? _progressTitle;
 
     protected override void OnAfterRender(bool firstRender)
     {
-        if (firstRender)
+        if (firstRender && _inputFile != null)
         {
-            inputFile.ShowFilesDialogAsync();
+            _inputFile.ShowFilesDialogAsync();
         }
     }
 
-    void Deserialize(FileStream stream)
+    bool Deserialize(FileStream stream)
     {
         var p = JsonSerializer.Deserialize<Project>(stream);
         if (p != null)
         {
-            appState.Project = p;
+            AppState.Project = p;
+            AppState.CurrentSheet = AppState.Project.Sheets.First();
+            return true;
         }
+
+        return false;
     }
 
     void OnCompleted(IEnumerable<FluentInputFileEventArgs> files)
     {
-        progressPercent = inputFile!.ProgressPercent;
-        progressTitle = inputFile!.ProgressTitle;
+        _progressPercent = _inputFile!.ProgressPercent;
+        _progressTitle = _inputFile!.ProgressTitle;
 
+        bool fileDeserialized = false;
         foreach (var file in files)
         {
-            if (files.FirstOrDefault() == file)
+            if (!fileDeserialized)
             {
                 var stream = file.LocalFile?.OpenRead();
-                Deserialize(stream);
-                stream.Close();
+                if (stream != null)
+                {
+                    fileDeserialized = Deserialize(stream);
+                    stream.Close();
+                }
             }
             file.LocalFile?.Delete();
         }
-        navMan.NavigateTo("/Zuschnitt");
+        NavigationManager.NavigateTo("/Zuschnitt");
     }
 }

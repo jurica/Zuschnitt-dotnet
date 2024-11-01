@@ -11,7 +11,7 @@ public class Part
     public string Color { get; set; }
     public string FillColor { get; set; }
     [JsonIgnore]
-    public bool Hightlighted { get; set; }
+    public bool Highlighted { get; set; }
     [JsonIgnore]
     public bool Editing { get; set; }
 
@@ -23,12 +23,12 @@ public class Part
         Height = 50;
         Color = "black";
         FillColor = "green";
-        Hightlighted = false;
+        Highlighted = false;
     }
 
     public double FillOpacity()
     {
-        if (Hightlighted) return 0.5;
-        return 0.01;
+        if (Highlighted) return 0.5;
+        return 0.1;
     }
 }

@@ -1,0 +1,32 @@
+@using Zuschnitt.Models;
+
+@inject AppState AppState;
+
+<FluentMenuButton IconStart="@(new Icons.Regular.Size20.MoreHorizontal())" Text="">
+    @foreach (var sheet in AppState.Project.Sheets)
+    {
+        <FluentMenuItem Disabled="@(sheet == AppState.CurrentSheet)" Id="@sheet.Id.ToString()" @onclick="() => Reassign(sheet)">Move to: @sheet.Name</FluentMenuItem>
+    }
+    <FluentMenuItem Id="@Column?.Id.ToString()" @onclick="() => DeleteColumn()">Delete</FluentMenuItem>
+</FluentMenuButton>
+
+@code {
+    [Parameter] public Column? Column { get; set; }
+
+    private void Reassign(Sheet newSheet)
+    {
+        if (Column == null) return;
+        if (newSheet.Columns.Contains(Column)) return;
+
+        AppState.CurrentSheet.Columns.Remove(Column);
+        newSheet.Columns.Add(Column);
+    }
+
+    private void DeleteColumn()
+    {
+        if (Column == null) return;
+        
+        AppState.CurrentSheet.Columns.Remove(Column);
+    }
+
+}

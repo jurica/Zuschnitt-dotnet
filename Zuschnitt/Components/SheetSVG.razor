@@ -1,0 +1,27 @@
+@using Zuschnitt.Models;
+
+@if (Sheet != null)
+{
+    <svg viewBox="0 0 @Sheet.Width @Sheet.Height">
+        <rect id="@Sheet.Id.ToString()" x="0" y="0" width="@Sheet.Width" height="@Sheet.Height" stroke="@Sheet.Color" stroke-width="1" fill="@Sheet.FillColor" />
+        @{
+            int x = 0;
+            foreach (var column in Sheet.Columns)
+            {
+                <rect id="@column.Id.ToString()" x="@x" y="0" width="@column.Width()" height="@Sheet.Height" stroke="@column.Color" stroke-width="1" fill="@column.FillColor" fill-opacity="@column.FillOpacity()" @onmouseleave="() => column.Highlighted = false" @onmouseenter="() => column.Highlighted = true" @onclick="() => column.Editing = true"/>
+                int y = 0;
+                foreach (var part in column.Parts)
+                {
+                    <rect id="@part.Id.ToString()" x="@x" y="@y" width="@part.Width" height="@part.Height" stroke="@part.Color" stroke-width="1" fill="@part.FillColor" fill-opacity="@part.FillOpacity()" @onmouseleave="() => part.Highlighted = false" @onmouseenter="() => part.Highlighted = true" @onclick="() => part.Editing = true" @oncontextmenu="() => part.Editing = true" @oncontextmenu:preventDefault="true"/>
+                    y += part.Height;
+                }
+
+                x += column.Width();
+            }
+        }
+    </svg>
+}
+
+@code {
+    [Parameter] public Sheet? Sheet { get; set; }
+}
