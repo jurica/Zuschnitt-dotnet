@@ -3,7 +3,7 @@
 @if (Sheet != null)
 {
     <svg viewBox="0 0 @Sheet.Width @Sheet.Height">
-        <rect id="@Sheet.Id.ToString()" x="0" y="0" width="@Sheet.Width" height="@Sheet.Height" stroke="@Sheet.Color" stroke-width="1" fill="@Sheet.FillColor" @onclick="() => Clicked(Sheet.Id)"/>
+        <rect id="@Sheet.Id.ToString()" x="0" y="0" width="@Sheet.Width" height="@Sheet.Height" stroke="@Sheet.Color" stroke-width="1" fill="@Sheet.FillColor" />
         @{
             int x = 0;
             foreach (var column in Sheet.Columns)
@@ -24,9 +24,4 @@
 
 @code {
     [Parameter] public Sheet? Sheet { get; set; }
-
-    private void Clicked(Guid id)
-    {
-    }
-
 }
