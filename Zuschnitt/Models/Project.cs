@@ -8,7 +8,6 @@ public class Project
     public List<Sheet> Sheets { get; set; }
     [JsonIgnore]
     public bool Editing { get; set; }
-    public double ScaleFactor { get; set; }
 
     public Project()
     {
@@ -16,7 +15,6 @@ public class Project
         Sheets = new ();
         Name = "";
         Editing = false;
-        ScaleFactor = 1.0;
         
         Sheets.Add(new Sheet());
     }
