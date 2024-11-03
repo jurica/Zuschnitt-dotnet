@@ -7,12 +7,13 @@ public class AppState
 {
     public Project Project { get; set; }
     public Sheet CurrentSheet { get; set; }
+    public event Action? OnStateChange;
 
     public AppState()
     {
         Project = new Project();
         CurrentSheet = Project.Sheets.First();
-        //InitWithTestdata();
+        InitWithTestdata();
     }
 
     private void InitWithTestdata()
@@ -26,4 +27,6 @@ public class AppState
 
         CurrentSheet = Project.Sheets.First();
     }
+
+    public void StateHasChanged() => OnStateChange?.Invoke();
 }

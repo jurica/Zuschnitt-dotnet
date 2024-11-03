@@ -1,0 +1,41 @@
+@using Zuschnitt.Models
+
+@inject AppState AppState
+
+@if (Part != null && Column != null)
+{
+    <FluentCard MinimalStyle="true" Style="padding: 5px;" @onmouseenter="HighlightOn" @onmouseleave="HighlightOff" @onfocusin="HighlightOn" @onfocusout="HighlightOff">
+        <FluentTextField @bind-Value=Part.Name Style="width: 100%"></FluentTextField>
+        <FluentStack Orientation="Orientation.Horizontal">
+            <FluentNumberField @bind-Value=Part.Width @bind-Value:after="AppState.StateHasChanged" Style="width: 50%;"></FluentNumberField>
+            <FluentNumberField @bind-Value=Part.Height @bind-Value:after="AppState.StateHasChanged" Style="width: 50%;"></FluentNumberField>
+            <FluentButton IconStart="@(new Icons.Regular.Size28.Delete())" @onclick="() => DeletePart(Column, Part)"></FluentButton>
+        </FluentStack>
+    </FluentCard>
+}
+
+@code {
+    [Parameter] public Part? Part { get; set; }
+    [Parameter] public Column? Column { get; set; }
+
+    private void DeletePart(Column column, Part part)
+    {
+        column.Parts.Remove(part);
+        AppState.StateHasChanged();
+    }
+
+    private void HighlightOn()
+    {
+        if (Part == null) return;
+        Part.Highlighted = true;
+        AppState.StateHasChanged();
+    }
+
+    private void HighlightOff()
+    {
+        if (Part == null) return;
+        Part.Highlighted = false;
+        AppState.StateHasChanged();
+    }
+
+}

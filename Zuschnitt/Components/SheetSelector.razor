@@ -1,0 +1,68 @@
+@using Zuschnitt.Models
+
+@inject AppState AppState
+
+@if (Sheet != null)
+{
+    <FluentStack Orientation="Orientation.Horizontal">
+        <FluentMenuButton Text="Select Sheet">
+            <FluentMenuItem @onclick="() => AddSheet()">New</FluentMenuItem>
+            @foreach (var sheet in AppState.Project.Sheets)
+            {
+                <FluentMenuItem Disabled="@(sheet == AppState.CurrentSheet)" Id="@sheet.Id.ToString()" @onclick="() => SelectSheet(sheet)">@sheet.Name</FluentMenuItem>
+            }
+        </FluentMenuButton>
+        <FluentSpacer/>
+        <FluentButton IconStart="@(new Icons.Regular.Size28.Add())" @onclick="() => AddColumn()" Style="horiz-align: center">Add Column</FluentButton>
+    </FluentStack>
+    <FluentCard MinimalStyle="true" Style="padding: 5px; margin-top: 10px; margin-bottom: 10px">
+        <FluentTextField @bind-Value=Sheet.Name Style="width: 100%"></FluentTextField>
+        <FluentStack Orientation="Orientation.Horizontal">
+            <FluentNumberField @bind-Value=Sheet.Width Style="width: 50%;"></FluentNumberField>
+            <FluentNumberField @bind-Value=Sheet.Height Style="width: 50%;"></FluentNumberField>
+            <FluentButton IconStart="@(new Icons.Regular.Size28.Delete())" @onclick="() => DeleteCurrentSheet()"></FluentButton>
+        </FluentStack>
+    </FluentCard>
+}
+
+@code {
+    [Parameter] public Sheet? Sheet { get; set; }
+
+    private void DeleteCurrentSheet()
+    {
+        AppState.Project.Sheets.Remove(AppState.CurrentSheet);
+        if (!AppState.Project.Sheets.Any())
+        {
+            var sheet = new Sheet();
+            AppState.Project.Sheets.Add(sheet);
+            AppState.CurrentSheet = sheet;
+        }
+        else
+        {
+            AppState.CurrentSheet = AppState.Project.Sheets.First();
+        }
+
+        AppState.StateHasChanged();
+    }
+
+    private void AddSheet()
+    {
+        var sheet = new Sheet();
+        AppState.Project.Sheets.Add(sheet);
+        AppState.CurrentSheet = sheet;
+        AppState.StateHasChanged();
+    }
+
+    private void SelectSheet(Sheet sheet)
+    {
+        AppState.CurrentSheet = sheet;
+        AppState.StateHasChanged();
+    }
+
+    private void AddColumn()
+    {
+        Sheet?.Columns.Add(new Column());
+        AppState.StateHasChanged();
+    }
+
+}

@@ -43,6 +43,6 @@
         JsRuntime.InvokeAsync<object>(
             "saveAsFile",
             filename,
-            System.Convert.ToBase64String(JsonSerializer.SerializeToUtf8Bytes(AppState.Project)));
+            Convert.ToBase64String(JsonSerializer.SerializeToUtf8Bytes(AppState.Project)));
     }
 }
