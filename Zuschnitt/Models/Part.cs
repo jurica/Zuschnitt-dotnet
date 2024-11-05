@@ -1,5 +1,4 @@
 using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Components;
 
 namespace Zuschnitt.Models;
 
@@ -32,6 +31,4 @@ public class Part
         if (Highlighted) return 0.5;
         return 0.1;
     }
-    
-    public EventCallback OnChange { get; set; }
 }
