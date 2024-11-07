@@ -5,16 +5,16 @@
 <FluentSplitter Orientation="Orientation.Horizontal" style="width: 100%; height: 100%">
     <Panel1>
         <div Style="padding: 10px;">
-            <SheetSelector Sheet="AppState.CurrentSheet" />
-            <SheetSVG Sheet="AppState.CurrentSheet"/>
+            <SheetSelector Sheet="AppState.CurrentSheet"/>
+            <SheetSVG Sheet="AppState.CurrentSheet" PartClicked="PartClicked" />
         </div>
     </Panel1>
     <Panel2>
-        <FluentHorizontalScroll Style="--scroll-align: flex-start; padding: 10px">
+        <FluentHorizontalScroll @ref="_horizontalScroll" View="HorizontalScrollView.Mobile" Style="--scroll-align: flex-start; padding: 10px">
             @{
                 foreach (var column in AppState.CurrentSheet.Columns)
                 {
-                    <ColumnCard Column="column" />
+                    <ColumnCard Column="column"/>
                 }
             }
         </FluentHorizontalScroll>
@@ -23,9 +23,17 @@
 
 @code
 {
+    FluentHorizontalScroll _horizontalScroll = default!;
+
     protected override void OnInitialized()
     {
         AppState.OnStateChange += StateHasChanged;
     }
 
+    public void PartClicked(Part part)
+    {
+        var column = AppState.CurrentSheet.Columns .First(c => c.Parts.Contains(part));
+        var index = AppState.CurrentSheet.Columns.IndexOf(column);
+        _horizontalScroll.ScrollInView(index);
+    }
 }
