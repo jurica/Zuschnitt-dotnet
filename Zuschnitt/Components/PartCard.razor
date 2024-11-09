@@ -4,14 +4,22 @@
 
 @if (Part != null && Column != null)
 {
-    <FluentCard MinimalStyle="true" Style="padding: 5px;" @onmouseenter="HighlightOn" @onmouseleave="HighlightOff" @onfocusin="HighlightOn" @onfocusout="HighlightOff">
+    <FluentStack Orientation="Orientation.Vertical" VerticalGap="0">
+        @if (AppState.ReducedEditor)
+        {
+            <FluentLabel Typo="Typography.H5">@Part.Name</FluentLabel>
+        }
+        else
+        {
+        <PartActions Column="Column" Part="Part"/>
         <FluentTextField @bind-Value=Part.Name Style="width: 100%"></FluentTextField>
-        <FluentStack Orientation="Orientation.Horizontal">
+        }
+        <FluentStack Orientation="Orientation.Horizontal" VerticalAlignment="VerticalAlignment.Center">
             <FluentNumberField @bind-Value=Part.Width @bind-Value:after="AppState.StateHasChanged" Style="width: 50%;"></FluentNumberField>
+            x
             <FluentNumberField @bind-Value=Part.Height @bind-Value:after="AppState.StateHasChanged" Style="width: 50%;"></FluentNumberField>
-            <FluentButton IconStart="@(new Icons.Regular.Size28.Delete())" @onclick="() => DeletePart(Column, Part)"></FluentButton>
         </FluentStack>
-    </FluentCard>
+    </FluentStack>
 }
 
 @code {
@@ -37,5 +45,4 @@
         Part.Highlighted = false;
         AppState.StateHasChanged();
     }
-
 }

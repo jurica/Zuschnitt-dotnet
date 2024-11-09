@@ -1,0 +1,21 @@
+@using Zuschnitt.Models;
+
+@inject AppState AppState;
+
+<FluentMenuButton IconStart="@(new Icons.Regular.Size20.MoreHorizontal())" ButtonAppearance="Appearance.Neutral">
+    <FluentMenuItem Id="@Part?.Id.ToString()" @onclick="() => DeletePart()">Delete</FluentMenuItem>
+</FluentMenuButton>
+
+@code {
+    [Parameter] public Part? Part { get; set; }
+    [Parameter] public Column? Column { get; set; }
+
+    private void DeletePart()
+    {
+        if (Column == null) return;
+        if (Part == null) return;
+        Column.Parts.Remove(Part);
+        AppState.StateHasChanged();
+    }
+
+}

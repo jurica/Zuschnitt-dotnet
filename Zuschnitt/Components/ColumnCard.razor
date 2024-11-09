@@ -7,11 +7,14 @@
     <FluentCard MinimalStyle="true" Style="padding: 10px; width: 300px" @onmouseenter="HighlightOn" @onmouseleave="HighlightOff" @onfocusin="HighlightOn" @onfocusout="HighlightOff">
         <FluentStack Orientation="Orientation.Vertical">
             <FluentLabel Typo="Typography.H3">#@(AppState.CurrentSheet.Columns.IndexOf(@Column) + 1) (@Column.Width()/@Column.Height())</FluentLabel>
-            <FluentStack Orientation="Orientation.Horizontal">
-                <ColumnActions Column="Column"/>
-                <FluentSpacer/>
-                <FluentButton IconStart="@(new Icons.Regular.Size28.Add())" @onclick="() => AddPart(Column)" Style="horiz-align: center">Add Part</FluentButton>
-            </FluentStack>
+            @if (!AppState.ReducedEditor)
+            {
+                <FluentStack Orientation="Orientation.Horizontal">
+                    <ColumnActions Column="Column"/>
+                    <FluentSpacer/>
+                    <FluentButton IconStart="@(new Icons.Regular.Size28.Add())" @onclick="() => AddPart(Column)" Style="horiz-align: center">Add Part</FluentButton>
+                </FluentStack>
+            }
             @{
                 foreach (var part in Column.Parts)
                 {

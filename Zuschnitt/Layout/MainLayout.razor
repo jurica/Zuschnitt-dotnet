@@ -24,7 +24,10 @@
             </ErrorContent>
         </ErrorBoundary>
     </FluentBodyContent>
-    <FluentFooter><FluentSpacer/>© 2024 Jurica Bacurin</FluentFooter>
+    <FluentFooter>
+        <FluentCheckbox @bind-Value="@AppState.ReducedEditor">Simple</FluentCheckbox>
+        <FluentSpacer/>© 2024 Jurica Bacurin
+    </FluentFooter>
 </FluentLayout>
 <FluentMenuProvider/>
 

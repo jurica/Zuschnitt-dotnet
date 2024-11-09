@@ -9,6 +9,18 @@ public class AppState
     public Sheet CurrentSheet { get; set; }
     public event Action? OnStateChange;
 
+    private bool _reducedEditor = false;
+    public bool ReducedEditor
+    {
+        get {return _reducedEditor;}
+        set
+        {
+            if (_reducedEditor == value) return;
+            _reducedEditor = value;
+            StateHasChanged();
+        }
+    }
+
     public AppState()
     {
         Project = new Project();
