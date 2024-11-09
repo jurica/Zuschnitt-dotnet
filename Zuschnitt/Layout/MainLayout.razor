@@ -1,14 +1,7 @@
 ﻿@inherits LayoutComponentBase
 
-@using Zuschnitt.Components
-
-@inject AppState AppState
-
 <FluentLayout>
-    <FluentHeader>
-        <ProjectActions />
-        <FluentTextField @bind-Value=AppState.Project.Name Style="width: 100%;"></FluentTextField>
-    </FluentHeader>
+    <ProjectHeader />
     <FluentBodyContent Class="content">
         <ErrorBoundary>
             <ChildContent>
