@@ -4,20 +4,23 @@
 
 <FluentButton Id="@_id" IconStart="@(new Icons.Regular.Size20.LineHorizontal3())" OnClick="() => _showMenu = !_showMenu"/>
 <FluentMenu @bind-Open="_showMenu" Anchor="@_id">
+    <ActionMenuItem OnClick="AddColumn" Icon="@(new Icons.Regular.Size20.AddCircle())" Text="Add Column"/>
+    <FluentDivider/>
     <ActionMenuItem OnClick="AddSheet" Icon="@(new Icons.Regular.Size20.New())" Text="New sheet"/>
     <ActionMenuItem OnClick="CopySheet" Icon="@(new Icons.Regular.Size20.Copy())" Text="Duplicate Sheet"/>
-    <ActionMenuItem OnClick="AddColumn" Icon="@(new Icons.Regular.Size20.AddCircle())" Text="Add Column"/>
+    <FluentDivider/>
         @foreach (var sheet in AppState.Project.Sheets)
         {
             if (sheet == AppState.CurrentSheet) continue;
             <ActionMenuItem OnClick="() => SelectSheet(sheet)" Icon="@(new Icons.Regular.Size20.LayoutColumnTwoSplitRight())" Text="@($"Select: {sheet.Name}")"/>
         }
+    <FluentDivider/>
     <ActionMenuItem OnClick="DeleteCurrentSheet" Icon="@(new Icons.Regular.Size20.Delete())" Text="Delete sheet"/>
 </FluentMenu>
 
 @code {
     private bool _showMenu = false;
-    private string _id = $"{Guid.NewGuid().ToString()}";
+    private string _id = Guid.NewGuid().ToString();
 
     private void DeleteCurrentSheet()
     {

@@ -5,11 +5,13 @@
 <FluentButton Id="@_id" IconStart="@(new Icons.Regular.Size20.LineHorizontal3())" OnClick="() => _showMenu = !_showMenu"/>
 <FluentMenu @bind-Open="_showMenu" Anchor="@_id" UseMenuService="true" VerticalThreshold="170">
     <ActionMenuItem OnClick="CopyPart" Text="Duplicate part" Icon="@(new Icons.Regular.Size20.Copy())" />
+    <FluentDivider/>
     @foreach (var column in AppState.CurrentSheet.Columns)
     {
         if (column == Column) continue;
-        <ActionMenuItem OnClick="() => Reassign(column)" Text="@($"Move to: {AppState.CurrentSheet.Columns.IndexOf(column)+1}")" Icon="@(new Icons.Regular.Size20.TableMoveRight())" />
+        <ActionMenuItem OnClick="() => Reassign(column)" Text="@($"Move to: #{AppState.CurrentSheet.Columns.IndexOf(column)+1}")" Icon="@(new Icons.Regular.Size20.TableMoveRight())" />
     }
+    <FluentDivider/>
     <ActionMenuItem OnClick="DeletePart" Text="Delete part" Icon="@(new Icons.Regular.Size20.Delete())" />
 </FluentMenu>
 
@@ -18,7 +20,7 @@
     [Parameter] public Column? Column { get; set; }
 
     private bool _showMenu = false;
-    private string _id = $"{Guid.NewGuid().ToString()}";
+    private string _id = Guid.NewGuid().ToString();
 
     private void CopyPart()
     {
@@ -26,7 +28,7 @@
         if (Column == null) return;
         if (Part == null) return;
         var copy = new Part(Part);
-        Column.Parts.Add(copy);
+        Column.Parts.Insert(Column.Parts.IndexOf(Part)+1, copy);
         AppState.StateHasChanged();
     }
 

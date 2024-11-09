@@ -10,8 +10,6 @@ public class Column
     public List<Part> Parts { get; set; }
     [JsonIgnore]
     public bool Highlighted { get; set; }
-    [JsonIgnore]
-    public bool Editing { get; set; }
 
     public Column()
     {

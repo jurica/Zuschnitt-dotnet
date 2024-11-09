@@ -4,13 +4,17 @@
 
 <FluentButton Id="@_id" IconStart="@(new Icons.Regular.Size20.LineHorizontal3())" OnClick="() => _showMenu = !_showMenu"/>
 <FluentMenu @bind-Open="_showMenu" Anchor="@_id">
-    <ActionMenuItem OnClick="AddPart" Text="Add Part" Icon="@(new Icons.Regular.Size20.AddCircle())" />
+    <ActionMenuItem OnClick="AddPart" Text="Add Part" Icon="@(new Icons.Regular.Size20.AddCircle())"/>
+    <FluentDivider/>
+    <ActionMenuItem OnClick="AddColumn" Text="New Column" Icon="@(new Icons.Regular.Size20.New())"/>
     <ActionMenuItem OnClick="CopyColumn" Text="Duplicate Column" Icon="@(new Icons.Regular.Size20.Copy())"/>
+    <FluentDivider/>
     @foreach (var sheet in AppState.Project.Sheets)
     {
         if (sheet == AppState.CurrentSheet) continue;
         <ActionMenuItem Icon="@(new Icons.Regular.Size20.TableMoveRight())" OnClick="() => Reassign(sheet)" Text="@($"Move to: {sheet.Name}")"/>
     }
+    <FluentDivider/>
     <ActionMenuItem Icon="@(new Icons.Regular.Size20.Delete())" OnClick="DeleteColumn" Text="Delete Column"/>
 </FluentMenu>
 
@@ -18,15 +22,25 @@
     [Parameter] public Column? Column { get; set; }
 
     private bool _showMenu = false;
-    private string _id = $"{Guid.NewGuid().ToString()}";
+    private string _id = Guid.NewGuid().ToString();
 
-    private void CopyColumn()
+    private void InsertColumn(Column column)
     {
         _showMenu = false;
         if (Column == null) return;
-        var copy = new Column(Column);
-        AppState.CurrentSheet.Columns.Add(copy);
+        AppState.CurrentSheet.Columns.Insert(AppState.CurrentSheet.Columns.IndexOf(Column)+1, column);
         AppState.StateHasChanged();
+    }
+
+    private void AddColumn()
+    {
+        InsertColumn(new Column());
+    }
+
+    private void CopyColumn()
+    {
+        if (Column == null) return;
+        InsertColumn(new Column(Column));
     }
 
     private void AddPart()

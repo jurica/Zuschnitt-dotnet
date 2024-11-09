@@ -15,7 +15,7 @@
     [Parameter] public Column? Column { get; set; }
 
     private bool _showMenu = false;
-    private string _id = $"{Guid.NewGuid().ToString()}";
+    private string _id = Guid.NewGuid().ToString();
 
     private void OpenFile()
     {

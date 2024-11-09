@@ -8,7 +8,7 @@
             int x = 0;
             foreach (var column in Sheet.Columns)
             {
-                <rect id="@column.Id.ToString()" x="@x" y="0" width="@column.Width()" height="@Sheet.Height" stroke="@column.Color" stroke-width="1" fill="@column.FillColor" fill-opacity="@column.FillOpacity()" @onmouseleave="() => column.Highlighted = false" @onmouseenter="() => column.Highlighted = true" @onclick="() => column.Editing = true"/>
+                <rect id="@column.Id.ToString()" x="@x" y="0" width="@column.Width()" height="@Sheet.Height" stroke="@column.Color" stroke-width="1" fill="@column.FillColor" fill-opacity="@column.FillOpacity()" @onmouseleave="() => column.Highlighted = false" @onmouseenter="() => column.Highlighted = true" />
                 int y = 0;
                 foreach (var part in column.Parts)
                 {
