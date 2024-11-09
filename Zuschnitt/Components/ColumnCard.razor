@@ -8,7 +8,7 @@
         <FluentStack Orientation="Orientation.Vertical">
             <FluentStack Orientation="Orientation.Horizontal" VerticalAlignment="VerticalAlignment.Center">
                 <ColumnActions Column="Column"/>
-                <FluentLabel Typo="Typography.Header">#@(AppState.CurrentSheet.Columns.IndexOf(@Column) + 1) (@Column.Width()/@Column.Height())</FluentLabel>
+                <FluentLabel Typo="Typography.Header">#@(AppState.SelectedSheet.Columns.IndexOf(@Column) + 1) (@Column.Width()/@Column.Height())</FluentLabel>
             </FluentStack>
             @{
                 foreach (var part in Column.Parts)

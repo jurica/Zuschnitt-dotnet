@@ -11,7 +11,7 @@
     <FluentDivider/>
     @foreach (var sheet in AppState.Project.Sheets)
     {
-        if (sheet == AppState.CurrentSheet) continue;
+        if (sheet == AppState.SelectedSheet) continue;
         <ActionMenuItem Icon="@(new Icons.Regular.Size20.TableMoveRight())" OnClick="() => Reassign(sheet)" Text="@($"Move to: {sheet.Name}")"/>
     }
     <FluentDivider/>
@@ -28,7 +28,7 @@
     {
         _showMenu = false;
         if (Column == null) return;
-        AppState.CurrentSheet.Columns.Insert(AppState.CurrentSheet.Columns.IndexOf(Column)+1, column);
+        AppState.SelectedSheet.Columns.Insert(AppState.SelectedSheet.Columns.IndexOf(Column)+1, column);
         AppState.StateHasChanged();
     }
 
@@ -57,7 +57,7 @@
         if (Column == null) return;
         if (newSheet.Columns.Contains(Column)) return;
 
-        AppState.CurrentSheet.Columns.Remove(Column);
+        AppState.SelectedSheet.Columns.Remove(Column);
         newSheet.Columns.Add(Column);
         AppState.StateHasChanged();
     }
@@ -67,7 +67,7 @@
         _showMenu = false;
         if (Column == null) return;
 
-        AppState.CurrentSheet.Columns.Remove(Column);
+        AppState.SelectedSheet.Columns.Remove(Column);
         AppState.StateHasChanged();
     }
 

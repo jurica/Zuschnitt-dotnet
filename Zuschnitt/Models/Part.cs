@@ -12,6 +12,8 @@ public class Part
     public string FillColor { get; set; }
     [JsonIgnore]
     public bool Highlighted { get; set; }
+    [JsonIgnore]
+    public bool Editing { get; set; }
 
     public Part()
     {
