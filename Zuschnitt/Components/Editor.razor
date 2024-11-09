@@ -32,7 +32,7 @@
 
     public void PartClicked(Part part)
     {
-        var column = AppState.SelectedSheet.Columns .First(c => c.Parts.Contains(part));
+        var column = AppState.SelectedSheet.Columns.First(c => c.Parts.Contains(part));
         var index = AppState.SelectedSheet.Columns.IndexOf(column);
         _horizontalScroll.ScrollInView(index);
     }
