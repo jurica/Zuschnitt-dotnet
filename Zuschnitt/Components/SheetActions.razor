@@ -1,0 +1,68 @@
+@using Zuschnitt.Models;
+
+@inject AppState AppState;
+
+<FluentAnchor Id="@_id" IconStart="@(new Icons.Regular.Size20.LineHorizontal3())" OnClick="() => _showMenu = !_showMenu"/>
+<FluentMenu @bind-Open="_showMenu" Anchor="@_id">
+    <FluentStack Orientation="Orientation.Vertical" VerticalGap="0">
+        <FluentButton @onclick="() => AddSheet()" IconStart="@(new Icons.Regular.Size20.New())" Appearance="Appearance.Stealth" Style="width: 100%">New sheet</FluentButton>
+        <FluentButton @onclick="() => AddColumn()" IconStart="@(new Icons.Regular.Size20.AddCircle())" Appearance="Appearance.Stealth" Style="width: 100%">Add column</FluentButton>
+        @foreach (var sheet in AppState.Project.Sheets)
+        {
+            if (sheet == AppState.CurrentSheet) continue;
+            <FluentButton Disabled="@(sheet == AppState.CurrentSheet)" OnClick="() => SelectSheet(sheet)" IconStart="@(new Icons.Regular.Size20.LayoutColumnTwoSplitRight())" Appearance="Appearance.Stealth" Style="width: 100%">Select: @sheet.Name</FluentButton>
+        }
+        <FluentButton OnClick="DeleteCurrentSheet" IconStart="@(new Icons.Regular.Size20.Delete())" Appearance="Appearance.Stealth" Style="width: 100%">Delete sheet</FluentButton>
+    </FluentStack>
+</FluentMenu>
+
+@code {
+    private bool _showMenu = false;
+    private string _id = $"{Guid.NewGuid().ToString()}";
+
+    private void DeleteCurrentSheet()
+    {
+        _showMenu = false;
+        AppState.Project.Sheets.Remove(AppState.CurrentSheet);
+        if (!AppState.Project.Sheets.Any())
+        {
+            var sheet = new Sheet();
+            AppState.Project.Sheets.Add(sheet);
+            AppState.CurrentSheet = sheet;
+        }
+        else
+        {
+            AppState.CurrentSheet = AppState.Project.Sheets.First();
+        }
+
+        AppState.StateHasChanged();
+    }
+
+    private void AddSheet()
+    {
+        _showMenu = false;
+        var sheet = new Sheet();
+        var column = new Column();
+        var part = new Part();
+        column.Parts.Add(part);
+        sheet.Columns.Add(column);
+        AppState.Project.Sheets.Add(sheet);
+        AppState.CurrentSheet = sheet;
+        AppState.StateHasChanged();
+    }
+
+    private void SelectSheet(Sheet sheet)
+    {
+        _showMenu = false;
+        AppState.CurrentSheet = sheet;
+        AppState.StateHasChanged();
+    }
+
+    private void AddColumn()
+    {
+        _showMenu = false;
+        AppState.CurrentSheet.Columns.Add(new Column());
+        AppState.StateHasChanged();
+    }
+
+}

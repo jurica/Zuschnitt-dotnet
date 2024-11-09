@@ -1,0 +1,39 @@
+@using Zuschnitt.Models;
+@using System.Text.Json;
+
+@inject AppState AppState
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JsRuntime
+
+<FluentAnchor Id="@_id" IconStart="@(new Icons.Regular.Size20.LineHorizontal3())" OnClick="() => _showMenu = !_showMenu"/>
+<FluentMenu @bind-Open="_showMenu" Anchor="@_id">
+    <FluentStack Orientation="Orientation.Vertical" VerticalGap="0">
+        <FluentButton IconStart="@(new Icons.Regular.Size20.Document())" Style="width: 100%" Appearance="Appearance.Stealth" @onclick="OpenFile">Open</FluentButton>
+        <FluentButton IconStart="@(new Icons.Regular.Size20.Save())" Style="width: 100%" Appearance="Appearance.Stealth" @onclick="SaveAs">Save</FluentButton>
+    </FluentStack>
+</FluentMenu>
+
+@code {
+    [Parameter] public Column? Column { get; set; }
+
+    private bool _showMenu = false;
+    private string _id = $"{Guid.NewGuid().ToString()}";
+
+    private void OpenFile()
+    {
+        _showMenu = false;
+        NavigationManager.NavigateTo("openfile");
+    }
+
+    private void SaveAs()
+    {
+        _showMenu = false;
+        string filename = "Zuschnitt";
+        if (!string.IsNullOrEmpty(AppState.Project.Name)) filename = AppState.Project.Name;
+        filename += ".zsn";
+        JsRuntime.InvokeAsync<object>(
+            "saveAsFile",
+            filename,
+            Convert.ToBase64String(JsonSerializer.SerializeToUtf8Bytes(AppState.Project)));
+    }
+}

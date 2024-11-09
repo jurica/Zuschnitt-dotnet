@@ -2,20 +2,40 @@
 
 @inject AppState AppState;
 
-<FluentMenuButton IconStart="@(new Icons.Regular.Size20.MoreHorizontal())" ButtonAppearance="Appearance.Neutral">
-    <FluentMenuItem Id="@Part?.Id.ToString()" @onclick="() => DeletePart()">Delete</FluentMenuItem>
-</FluentMenuButton>
+<FluentAnchor Id="@_id" IconStart="@(new Icons.Regular.Size20.LineHorizontal3())" OnClick="() => _showMenu = !_showMenu" />
+<FluentMenu @bind-Open="_showMenu" Anchor="@_id">
+    <FluentStack Orientation="Orientation.Vertical" VerticalGap="0">
+    @foreach (var column in AppState.CurrentSheet.Columns)
+    {
+        <FluentButton Disabled="@(column == Column)" Style="width: 100%" IconStart="@(new Icons.Regular.Size20.TableMoveRight())" @onclick="() => Reassign(column)" Appearance="Appearance.Stealth">Move to: #@(AppState.CurrentSheet.Columns.IndexOf(@column) + 1)</FluentButton>
+    }
+    <FluentButton OnClick="DeletePart" IconStart="@(new Icons.Regular.Size20.Delete())" Appearance="Appearance.Stealth" Style="width: 100%;">Delete part</FluentButton>
+    </FluentStack>
+</FluentMenu>
 
 @code {
     [Parameter] public Part? Part { get; set; }
     [Parameter] public Column? Column { get; set; }
 
+    private bool _showMenu = false;
+    private string _id = $"{Guid.NewGuid().ToString()}";
+
     private void DeletePart()
     {
+        _showMenu = false;
         if (Column == null) return;
         if (Part == null) return;
         Column.Parts.Remove(Part);
         AppState.StateHasChanged();
     }
 
+    private void Reassign(Column column)
+    {
+        _showMenu = false;
+        if (Column == null) return;
+        if (Part == null) return;
+        Column.Parts.Remove(Part);
+        column.Parts.Add(Part);
+        AppState.StateHasChanged();
+    }
 }
