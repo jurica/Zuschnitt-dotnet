@@ -6,6 +6,7 @@
 <FluentMenu @bind-Open="_showMenu" Anchor="@_id">
     <FluentStack Orientation="Orientation.Vertical" VerticalGap="0">
         <FluentButton @onclick="() => AddSheet()" IconStart="@(new Icons.Regular.Size20.New())" Appearance="Appearance.Stealth" Style="width: 100%">New sheet</FluentButton>
+        <FluentButton @onclick="() => CopySheet()" IconStart="@(new Icons.Regular.Size20.Copy())" Appearance="Appearance.Stealth" Style="width: 100%">Duplicate sheet</FluentButton>
         <FluentButton @onclick="() => AddColumn()" IconStart="@(new Icons.Regular.Size20.AddCircle())" Appearance="Appearance.Stealth" Style="width: 100%">Add column</FluentButton>
         @foreach (var sheet in AppState.Project.Sheets)
         {
@@ -48,6 +49,15 @@
         sheet.Columns.Add(column);
         AppState.Project.Sheets.Add(sheet);
         AppState.CurrentSheet = sheet;
+        AppState.StateHasChanged();
+    }
+
+    private void CopySheet()
+    {
+        _showMenu = false;
+        var copy = new Sheet(AppState.CurrentSheet);
+        AppState.Project.Sheets.Add(copy);
+        AppState.CurrentSheet = copy;
         AppState.StateHasChanged();
     }
 

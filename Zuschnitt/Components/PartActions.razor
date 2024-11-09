@@ -2,14 +2,19 @@
 
 @inject AppState AppState;
 
-<FluentAnchor Id="@_id" IconStart="@(new Icons.Regular.Size20.LineHorizontal3())" OnClick="() => _showMenu = !_showMenu" />
-<FluentMenu @bind-Open="_showMenu" Anchor="@_id">
+<FluentAnchor Id="@_id" IconStart="@(new Icons.Regular.Size20.LineHorizontal3())" OnClick="() => _showMenu = !_showMenu"/>
+<FluentMenu @bind-Open="_showMenu" Anchor="@_id" Width="700px">
     <FluentStack Orientation="Orientation.Vertical" VerticalGap="0">
-    @foreach (var column in AppState.CurrentSheet.Columns)
-    {
-        <FluentButton Disabled="@(column == Column)" Style="width: 100%" IconStart="@(new Icons.Regular.Size20.TableMoveRight())" @onclick="() => Reassign(column)" Appearance="Appearance.Stealth">Move to: #@(AppState.CurrentSheet.Columns.IndexOf(@column) + 1)</FluentButton>
-    }
-    <FluentButton OnClick="DeletePart" IconStart="@(new Icons.Regular.Size20.Delete())" Appearance="Appearance.Stealth" Style="width: 100%;">Delete part</FluentButton>
+        <FluentMenuItem @onclick="() => CopyPart()">
+            <FluentStack Orientation="Orientation.Horizontal" VerticalAlignment="VerticalAlignment.Center">
+                <FluentIcon Value="@(new Icons.Regular.Size20.Copy())"/> Duplicate part
+            </FluentStack>
+        </FluentMenuItem>
+        @foreach (var column in AppState.CurrentSheet.Columns)
+        {
+            <FluentButton Disabled="@(column == Column)" Style="width: 100%" IconEnd="@(new Icons.Regular.Size20.TableMoveRight())" @onclick="() => Reassign(column)" Appearance="Appearance.Stealth">Move to: #@(AppState.CurrentSheet.Columns.IndexOf(@column) + 1)</FluentButton>
+        }
+        <FluentButton OnClick="DeletePart" IconEnd="@(new Icons.Regular.Size20.Delete())" Appearance="Appearance.Stealth" Style="width: 100%;">Delete part</FluentButton>
     </FluentStack>
 </FluentMenu>
 
@@ -19,6 +24,16 @@
 
     private bool _showMenu = false;
     private string _id = $"{Guid.NewGuid().ToString()}";
+
+    private void CopyPart()
+    {
+        _showMenu = false;
+        if (Column == null) return;
+        if (Part == null) return;
+        var copy = new Part(Part);
+        Column.Parts.Add(copy);
+        AppState.StateHasChanged();
+    }
 
     private void DeletePart()
     {
@@ -38,4 +53,5 @@
         column.Parts.Add(Part);
         AppState.StateHasChanged();
     }
+
 }

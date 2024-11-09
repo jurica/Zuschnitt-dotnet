@@ -20,6 +20,15 @@ public class Column
         FillColor = "purple";
         Parts = new ();
     }
+    
+    public Column(Column column)
+    {
+        Id = Guid.NewGuid();
+        Color = column.Color;
+        FillColor = column.FillColor;
+        Parts = new ();
+        column.Parts.ForEach(p => Parts.Add(new Part(p)));
+    }
 
     public int Height()
     {

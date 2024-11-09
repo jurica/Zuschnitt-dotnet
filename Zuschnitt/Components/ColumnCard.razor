@@ -6,9 +6,9 @@
 {
     <FluentCard MinimalStyle="true" Style="padding: 10px; width: 300px" @onmouseenter="HighlightOn" @onmouseleave="HighlightOff" @onfocusin="HighlightOn" @onfocusout="HighlightOff">
         <FluentStack Orientation="Orientation.Vertical">
-            <FluentStack Orientation="Orientation.Horizontal">
+            <FluentStack Orientation="Orientation.Horizontal" VerticalAlignment="VerticalAlignment.Center">
                 <ColumnActions Column="Column"/>
-                <FluentLabel Typo="Typography.H3">#@(AppState.CurrentSheet.Columns.IndexOf(@Column) + 1) (@Column.Width()/@Column.Height())</FluentLabel>
+                <FluentLabel Typo="Typography.Header">#@(AppState.CurrentSheet.Columns.IndexOf(@Column) + 1) (@Column.Width()/@Column.Height())</FluentLabel>
             </FluentStack>
             @{
                 foreach (var part in Column.Parts)

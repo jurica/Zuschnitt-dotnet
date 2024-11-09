@@ -25,6 +25,17 @@ public class Part
         FillColor = "green";
         Highlighted = false;
     }
+    
+    public Part(Part part)
+    {
+        Id = Guid.NewGuid();
+        Name = $"{part.Name} copy";
+        Width = part.Width;
+        Height = part.Height;
+        Color = part.Color;
+        FillColor = part.FillColor;
+        Highlighted = false;
+    }
 
     public double FillOpacity()
     {
