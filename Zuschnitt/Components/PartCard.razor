@@ -12,12 +12,12 @@
         else
         {
         <PartActions Column="Column" Part="Part"/>
-        <FluentTextField @bind-Value=Part.Name Style="width: 100%"></FluentTextField>
+        <FluentTextField Appearance="_appearance" @bind-Value=Part.Name Style="width: 100%"></FluentTextField>
         }
         <FluentStack Orientation="Orientation.Horizontal" VerticalAlignment="VerticalAlignment.Center">
-            <FluentNumberField @bind-Value=Part.Width @bind-Value:after="AppState.StateHasChanged" Style="width: 50%;"></FluentNumberField>
+            <FluentNumberField Appearance="_appearance" @bind-Value=Part.Width @bind-Value:after="AppState.StateHasChanged" Style="width: 50%; direction: rtl"></FluentNumberField>
             x
-            <FluentNumberField @bind-Value=Part.Height @bind-Value:after="AppState.StateHasChanged" Style="width: 50%;"></FluentNumberField>
+            <FluentNumberField Appearance="_appearance" @bind-Value=Part.Height @bind-Value:after="AppState.StateHasChanged" Style="width: 50%; direction: rtl"></FluentNumberField>
         </FluentStack>
     </FluentStack>
 }
@@ -25,6 +25,15 @@
 @code {
     [Parameter] public Part? Part { get; set; }
     [Parameter] public Column? Column { get; set; }
+
+    private FluentInputAppearance _appearance
+    {
+        get
+        {
+            if (AppState.ReducedEditor) return FluentInputAppearance.Filled;
+            return FluentInputAppearance.Outline;
+        }
+    }
 
     private void DeletePart(Column column, Part part)
     {
