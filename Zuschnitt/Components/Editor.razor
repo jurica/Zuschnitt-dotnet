@@ -5,56 +5,16 @@
 <FluentSplitter Orientation="Orientation.Horizontal" style="width: 100%; height: 100%">
     <Panel1>
         <div Style="padding: 10px;">
-            <FluentStack Orientation="Orientation.Horizontal">
-            <FluentMenuButton Text="Select Sheet">
-                <FluentMenuItem @onclick="() => AddSheet()">New</FluentMenuItem>
-                @foreach (var sheet in AppState.Project.Sheets)
-                {
-                    <FluentMenuItem Disabled="@(sheet == AppState.CurrentSheet)" Id="@sheet.Id.ToString()" @onclick="() => SelectSheet(sheet)">@sheet.Name</FluentMenuItem>
-                }
-            </FluentMenuButton>
-                <FluentSpacer/>
-                <FluentButton IconStart="@(new Icons.Regular.Size28.Add())" @onclick="() => AddColumn()" Style="horiz-align: center">Add Column</FluentButton>
-            </FluentStack>
-            <FluentCard MinimalStyle="true" Style="padding: 5px; margin-top: 10px; margin-bottom: 10px">
-                <FluentTextField @bind-Value=AppState.CurrentSheet.Name Style="width: 100%"></FluentTextField>
-                <FluentStack Orientation="Orientation.Horizontal">
-                    <FluentNumberField @bind-Value=AppState.CurrentSheet.Width Style="width: 50%;"></FluentNumberField>
-                    <FluentNumberField @bind-Value=AppState.CurrentSheet.Height Style="width: 50%;"></FluentNumberField>
-                    <FluentButton IconStart="@(new Icons.Regular.Size28.Delete())" @onclick="() => DeleteCurrentSheet()"></FluentButton>
-                </FluentStack>
-            </FluentCard>
-            <SheetSVG Sheet="AppState.CurrentSheet"/>
+            <SheetSelector Sheet="AppState.SelectedSheet"/>
+            <SheetSVG Sheet="AppState.SelectedSheet" PartClicked="PartClicked" />
         </div>
     </Panel1>
     <Panel2>
-        <FluentHorizontalScroll Style="--scroll-align: flex-start; padding: 10px">
+        <FluentHorizontalScroll @ref="_horizontalScroll" View="HorizontalScrollView.Mobile" Style="--scroll-align: flex-start; padding: 10px">
             @{
-                foreach (var column in AppState.CurrentSheet.Columns)
+                foreach (var column in AppState.SelectedSheet.Columns)
                 {
-                    <FluentCard MinimalStyle="true" Style="padding: 10px; width: 300px" @onmouseenter="() => column.Highlighted = true" @onmouseleave="() => column.Highlighted = false" @onfocusin="() => column.Highlighted = true" @onfocusout="() => column.Highlighted = false">
-                        <FluentStack Orientation="Orientation.Vertical">
-                            <FluentLabel Typo="Typography.H3">#@(AppState.CurrentSheet.Columns.IndexOf(@column) + 1) (@column.Width()/@column.Height())</FluentLabel>
-                            <FluentStack Orientation="Orientation.Horizontal">
-                                <ColumnActions Column="column"/>
-                                <FluentSpacer/>
-                                <FluentButton IconStart="@(new Icons.Regular.Size28.Add())" @onclick="() => AddPart(column)" Style="horiz-align: center">Add Part</FluentButton>
-                            </FluentStack>
-                            @{
-                                foreach (var part in column.Parts)
-                                {
-                                    <FluentCard MinimalStyle="true" Style="padding: 5px;" @onmouseenter="() => part.Highlighted = true" @onmouseleave="() => part.Highlighted = false" @onfocusin="() => part.Highlighted = true" @onfocusout="() => part.Highlighted = false">
-                                        <FluentTextField @bind-Value=part.Name Style="width: 100%"></FluentTextField>
-                                        <FluentStack Orientation="Orientation.Horizontal">
-                                            <FluentNumberField @bind-Value=part.Width Style="width: 50%;"></FluentNumberField>
-                                            <FluentNumberField @bind-Value=part.Height Style="width: 50%;"></FluentNumberField>
-                                            <FluentButton IconStart="@(new Icons.Regular.Size28.Delete())" @onclick="() => DeletePart(column, part)"></FluentButton>
-                                        </FluentStack>
-                                    </FluentCard>
-                                }
-                            }
-                        </FluentStack>
-                    </FluentCard>
+                    <ColumnCard Column="column"/>
                 }
             }
         </FluentHorizontalScroll>
@@ -63,43 +23,17 @@
 
 @code
 {
-    private void SelectSheet(Sheet sheet)
+    FluentHorizontalScroll _horizontalScroll = default!;
+
+    protected override void OnInitialized()
     {
-        AppState.CurrentSheet = sheet;
+        AppState.OnStateChange += StateHasChanged;
     }
 
-    private void AddSheet()
+    public void PartClicked(Part part)
     {
-        var sheet = new Sheet();
-        AppState.Project.Sheets.Add(sheet);
-        AppState.CurrentSheet = sheet;
-    }
-
-    private void AddColumn()
-    {
-        AppState.CurrentSheet.Columns.Add(new Column());
-    }
-
-    private void AddPart(Column column)
-    {
-        column.Parts.Add(new Part());
-        StateHasChanged();
-    }
-
-    private void DeletePart(Column column, Part part)
-    {
-        column.Parts.Remove(part);
-    }
-
-    private void DeleteCurrentSheet()
-    {
-        AppState.Project.Sheets.Remove(AppState.CurrentSheet);
-        if (!AppState.Project.Sheets.Any())
-        {
-            AddSheet();
-            return;
-        }
-
-        AppState.CurrentSheet = AppState.Project.Sheets.First();
+        var column = AppState.SelectedSheet.Columns.First(c => c.Parts.Contains(part));
+        var index = AppState.SelectedSheet.Columns.IndexOf(column);
+        _horizontalScroll.ScrollInView(index);
     }
 }

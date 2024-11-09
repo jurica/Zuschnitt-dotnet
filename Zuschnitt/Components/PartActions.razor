@@ -1,0 +1,54 @@
+@using Zuschnitt.Models;
+
+@inject AppState AppState;
+
+<FluentButton Id="@_id" IconStart="@(new Icons.Regular.Size20.LineHorizontal3())" OnClick="() => _showMenu = !_showMenu"/>
+<FluentMenu @bind-Open="_showMenu" Anchor="@_id" UseMenuService="true" VerticalThreshold="170">
+    <ActionMenuItem OnClick="CopyPart" Text="Duplicate part" Icon="@(new Icons.Regular.Size20.Copy())" />
+    <FluentDivider/>
+    @foreach (var column in AppState.SelectedSheet.Columns)
+    {
+        if (column == Column) continue;
+        <ActionMenuItem OnClick="() => Reassign(column)" Text="@($"Move to: #{AppState.SelectedSheet.Columns.IndexOf(column)+1}")" Icon="@(new Icons.Regular.Size20.TableMoveRight())" />
+    }
+    <FluentDivider/>
+    <ActionMenuItem OnClick="DeletePart" Text="Delete part" Icon="@(new Icons.Regular.Size20.Delete())" />
+</FluentMenu>
+
+@code {
+    [Parameter] public Part? Part { get; set; }
+    [Parameter] public Column? Column { get; set; }
+
+    private bool _showMenu = false;
+    private string _id = Guid.NewGuid().ToString();
+
+    private void CopyPart()
+    {
+        _showMenu = false;
+        if (Column == null) return;
+        if (Part == null) return;
+        var copy = new Part(Part);
+        Column.Parts.Insert(Column.Parts.IndexOf(Part)+1, copy);
+        AppState.StateHasChanged();
+    }
+
+    private void DeletePart()
+    {
+        _showMenu = false;
+        if (Column == null) return;
+        if (Part == null) return;
+        Column.Parts.Remove(Part);
+        AppState.StateHasChanged();
+    }
+
+    private void Reassign(Column column)
+    {
+        _showMenu = false;
+        if (Column == null) return;
+        if (Part == null) return;
+        Column.Parts.Remove(Part);
+        column.Parts.Add(Part);
+        AppState.StateHasChanged();
+    }
+
+}

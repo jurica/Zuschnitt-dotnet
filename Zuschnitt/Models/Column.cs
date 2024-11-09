@@ -10,8 +10,6 @@ public class Column
     public List<Part> Parts { get; set; }
     [JsonIgnore]
     public bool Highlighted { get; set; }
-    [JsonIgnore]
-    public bool Editing { get; set; }
 
     public Column()
     {
@@ -19,6 +17,15 @@ public class Column
         Color = "black";
         FillColor = "purple";
         Parts = new ();
+    }
+    
+    public Column(Column column)
+    {
+        Id = Guid.NewGuid();
+        Color = column.Color;
+        FillColor = column.FillColor;
+        Parts = new ();
+        column.Parts.ForEach(p => Parts.Add(new Part(p)));
     }
 
     public int Height()

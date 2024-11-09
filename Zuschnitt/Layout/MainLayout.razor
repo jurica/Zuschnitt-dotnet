@@ -1,19 +1,7 @@
 ﻿@inherits LayoutComponentBase
 
-@using System.Text.Json
-
-@inject AppState AppState
-@inject NavigationManager NavigationManager
-@inject IJSRuntime JsRuntime
-
 <FluentLayout>
-    <FluentHeader>
-        <FluentTextField @bind-Value=AppState.Project.Name Style="width: 66%;"></FluentTextField>
-        <FluentSpacer/>
-        <FluentButton IconStart="@(new Icons.Regular.Size28.Document())" IconColor="Color.Accent" @onclick="OpenFile">Open</FluentButton>
-        <FluentSpacer Width="5"/>
-        <FluentButton IconStart="@(new Icons.Regular.Size28.Save())" IconColor="Color.Accent" @onclick="SaveAs">Save</FluentButton>
-    </FluentHeader>
+    <ProjectHeader />
     <FluentBodyContent Class="content">
         <ErrorBoundary>
             <ChildContent>
@@ -27,22 +15,3 @@
     <FluentFooter><FluentSpacer/>© 2024 Jurica Bacurin</FluentFooter>
 </FluentLayout>
 <FluentMenuProvider/>
-
-@code
-{
-    private void OpenFile()
-    {
-        NavigationManager.NavigateTo("openfile");
-    }
-
-    private void SaveAs()
-    {
-        string filename = "Zuschnitt";
-        if (!string.IsNullOrEmpty(AppState.Project.Name)) filename = AppState.Project.Name;
-        filename += ".zsn";
-        JsRuntime.InvokeAsync<object>(
-            "saveAsFile",
-            filename,
-            System.Convert.ToBase64String(JsonSerializer.SerializeToUtf8Bytes(AppState.Project)));
-    }
-}

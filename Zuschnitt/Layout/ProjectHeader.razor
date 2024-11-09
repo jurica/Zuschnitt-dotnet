@@ -1,0 +1,8 @@
+@using Zuschnitt.Components
+
+@inject AppState AppState
+
+<FluentHeader>
+    <ProjectActions/>
+    <FluentTextField @bind-Value=AppState.Project.Name Style="width: 100%;"></FluentTextField>
+</FluentHeader>

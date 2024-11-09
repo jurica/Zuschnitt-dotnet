@@ -1,0 +1,21 @@
+<FluentMenuItem @onclick="Clicked">
+    <FluentStack Orientation="Orientation.Horizontal" VerticalAlignment="VerticalAlignment.Center">
+        @if (Icon != null)
+        {
+            <FluentIcon Value="Icon"/>
+        }
+        @Text
+    </FluentStack>
+</FluentMenuItem>
+
+@code {
+    [Parameter] public EventCallback OnClick { get; set; }
+    [Parameter] public Icon? Icon { get; set; }
+    [Parameter] public string Text { get; set; } = "";
+
+    private void Clicked()
+    {
+        OnClick.InvokeAsync();
+    }
+
+}

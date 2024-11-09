@@ -6,12 +6,13 @@ namespace Zuschnitt;
 public class AppState
 {
     public Project Project { get; set; }
-    public Sheet CurrentSheet { get; set; }
+    public Sheet SelectedSheet { get; set; }
+    public event Action? OnStateChange;
 
     public AppState()
     {
         Project = new Project();
-        CurrentSheet = Project.Sheets.First();
+        SelectedSheet = Project.Sheets.First();
         //InitWithTestdata();
     }
 
@@ -24,6 +25,8 @@ public class AppState
             Project = p;
         }
 
-        CurrentSheet = Project.Sheets.First();
+        SelectedSheet = Project.Sheets.First();
     }
+
+    public void StateHasChanged() => OnStateChange?.Invoke();
 }

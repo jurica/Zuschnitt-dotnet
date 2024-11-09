@@ -2,31 +2,73 @@
 
 @inject AppState AppState;
 
-<FluentMenuButton IconStart="@(new Icons.Regular.Size20.MoreHorizontal())" Text="">
+<FluentButton Id="@_id" IconStart="@(new Icons.Regular.Size20.LineHorizontal3())" OnClick="() => _showMenu = !_showMenu"/>
+<FluentMenu @bind-Open="_showMenu" Anchor="@_id">
+    <ActionMenuItem OnClick="AddPart" Text="Add Part" Icon="@(new Icons.Regular.Size20.AddCircle())"/>
+    <FluentDivider/>
+    <ActionMenuItem OnClick="AddColumn" Text="New Column" Icon="@(new Icons.Regular.Size20.New())"/>
+    <ActionMenuItem OnClick="CopyColumn" Text="Duplicate Column" Icon="@(new Icons.Regular.Size20.Copy())"/>
+    <FluentDivider/>
     @foreach (var sheet in AppState.Project.Sheets)
     {
-        <FluentMenuItem Disabled="@(sheet == AppState.CurrentSheet)" Id="@sheet.Id.ToString()" @onclick="() => Reassign(sheet)">Move to: @sheet.Name</FluentMenuItem>
+        if (sheet == AppState.SelectedSheet) continue;
+        <ActionMenuItem Icon="@(new Icons.Regular.Size20.TableMoveRight())" OnClick="() => Reassign(sheet)" Text="@($"Move to: {sheet.Name}")"/>
     }
-    <FluentMenuItem Id="@Column?.Id.ToString()" @onclick="() => DeleteColumn()">Delete</FluentMenuItem>
-</FluentMenuButton>
+    <FluentDivider/>
+    <ActionMenuItem Icon="@(new Icons.Regular.Size20.Delete())" OnClick="DeleteColumn" Text="Delete Column"/>
+</FluentMenu>
 
 @code {
     [Parameter] public Column? Column { get; set; }
 
+    private bool _showMenu = false;
+    private string _id = Guid.NewGuid().ToString();
+
+    private void InsertColumn(Column column)
+    {
+        _showMenu = false;
+        if (Column == null) return;
+        AppState.SelectedSheet.Columns.Insert(AppState.SelectedSheet.Columns.IndexOf(Column)+1, column);
+        AppState.StateHasChanged();
+    }
+
+    private void AddColumn()
+    {
+        InsertColumn(new Column());
+    }
+
+    private void CopyColumn()
+    {
+        if (Column == null) return;
+        InsertColumn(new Column(Column));
+    }
+
+    private void AddPart()
+    {
+        _showMenu = false;
+        if (Column == null) return;
+        Column.Parts.Add(new Part());
+        AppState.StateHasChanged();
+    }
+
     private void Reassign(Sheet newSheet)
     {
+        _showMenu = false;
         if (Column == null) return;
         if (newSheet.Columns.Contains(Column)) return;
 
-        AppState.CurrentSheet.Columns.Remove(Column);
+        AppState.SelectedSheet.Columns.Remove(Column);
         newSheet.Columns.Add(Column);
+        AppState.StateHasChanged();
     }
 
     private void DeleteColumn()
     {
+        _showMenu = false;
         if (Column == null) return;
-        
-        AppState.CurrentSheet.Columns.Remove(Column);
+
+        AppState.SelectedSheet.Columns.Remove(Column);
+        AppState.StateHasChanged();
     }
 
 }

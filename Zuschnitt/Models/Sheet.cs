@@ -21,6 +21,18 @@ public class Sheet
         Columns = new ();
     }
 
+    public Sheet(Sheet sheet)
+    {
+        Id = Guid.NewGuid();
+        Name = $"{sheet.Name} copy";
+        Width = sheet.Width;
+        Height = sheet.Height;
+        Color = sheet.Color;
+        FillColor = sheet.FillColor;
+        Columns = new List<Column>();
+        sheet.Columns.ForEach(c => Columns.Add(new Column(c)));
+    }
+
     public int UsedHeight()
     {
         if (Columns.Count == 0) return 0;
