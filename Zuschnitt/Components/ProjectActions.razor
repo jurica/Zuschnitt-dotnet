@@ -5,12 +5,10 @@
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JsRuntime
 
-<FluentAnchor Id="@_id" IconStart="@(new Icons.Regular.Size20.LineHorizontal3())" OnClick="() => _showMenu = !_showMenu"/>
-<FluentMenu @bind-Open="_showMenu" Anchor="@_id">
-    <FluentStack Orientation="Orientation.Vertical" VerticalGap="0">
-        <FluentButton IconStart="@(new Icons.Regular.Size20.Document())" Style="width: 100%" Appearance="Appearance.Stealth" @onclick="OpenFile">Open</FluentButton>
-        <FluentButton IconStart="@(new Icons.Regular.Size20.Save())" Style="width: 100%" Appearance="Appearance.Stealth" @onclick="SaveAs">Save</FluentButton>
-    </FluentStack>
+<FluentButton Id="@_id" IconStart="@(new Icons.Regular.Size20.LineHorizontal3())" OnClick="() => _showMenu = !_showMenu"/>
+<FluentMenu @bind-Open="_showMenu" Anchor="@_id" VerticalThreshold="100">
+    <ActionMenuItem Icon="@(new Icons.Regular.Size20.Document())" OnClick="OpenFile" Text="Load"/>
+    <ActionMenuItem Icon="@(new Icons.Regular.Size20.Save())" OnClick="SaveAs" Text="Save"/>
 </FluentMenu>
 
 @code {

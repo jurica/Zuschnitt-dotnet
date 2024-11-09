@@ -2,17 +2,16 @@
 
 @inject AppState AppState;
 
-<FluentAnchor Id="@_id" IconStart="@(new Icons.Regular.Size20.LineHorizontal3())" OnClick="() => _showMenu = !_showMenu"/>
-<FluentMenu @bind-Open="_showMenu" Anchor="@_id" Style="width: 300px">
-    <FluentStack Orientation="Orientation.Vertical" VerticalGap="0">
-        <FluentButton IconStart="@(new Icons.Regular.Size20.AddCircle())" OnClick="AddPart" Appearance="Appearance.Stealth" Style="width: 100%;">Add Part</FluentButton>
-        <FluentButton @onclick="() => CopyColumn()" IconStart="@(new Icons.Regular.Size20.Copy())" Appearance="Appearance.Stealth" Style="width: 100%">Duplicate column</FluentButton>
-        @foreach (var sheet in AppState.Project.Sheets)
-        {
-            <FluentButton Disabled="@(sheet == AppState.CurrentSheet)" Style="width: 100%" IconStart="@(new Icons.Regular.Size20.TableMoveRight())" @onclick="() => Reassign(sheet)" Appearance="Appearance.Stealth">Move to: @sheet.Name</FluentButton>
-        }
-        <FluentButton IconStart="@(new Icons.Regular.Size20.Delete())" Style="width: 100%" Appearance="Appearance.Stealth" @onclick="() => DeleteColumn()">Delete</FluentButton>
-    </FluentStack>
+<FluentButton Id="@_id" IconStart="@(new Icons.Regular.Size20.LineHorizontal3())" OnClick="() => _showMenu = !_showMenu"/>
+<FluentMenu @bind-Open="_showMenu" Anchor="@_id">
+    <ActionMenuItem OnClick="AddPart" Text="Add Part" Icon="@(new Icons.Regular.Size20.AddCircle())" />
+    <ActionMenuItem OnClick="CopyColumn" Text="Duplicate Column" Icon="@(new Icons.Regular.Size20.Copy())"/>
+    @foreach (var sheet in AppState.Project.Sheets)
+    {
+        if (sheet == AppState.CurrentSheet) continue;
+        <ActionMenuItem Icon="@(new Icons.Regular.Size20.TableMoveRight())" OnClick="() => Reassign(sheet)" Text="@($"Move to: {sheet.Name}")"/>
+    }
+    <ActionMenuItem Icon="@(new Icons.Regular.Size20.Delete())" OnClick="DeleteColumn" Text="Delete Column"/>
 </FluentMenu>
 
 @code {
