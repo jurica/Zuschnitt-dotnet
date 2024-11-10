@@ -1,6 +1,5 @@
 @page "/openfile"
 
-@using System.Text.Json
 @using Zuschnitt.Models
 
 @inject AppState AppState
@@ -8,20 +7,16 @@
 
 
 <FluentInputFile @ref="@_inputFile"
-    DragDropZoneVisible="false"
-    Mode="InputFileMode.SaveToTemporaryFolder"
-    Multiple="false"
-    MaximumFileSize="@(20 * 1024)"
-    AnchorId="SelectFileButton"
-    Accept=".zsn, .json"
-    OnProgressChange="@(e =>
-        {
-            _progressPercent = e.ProgressPercent; 
-            _progressTitle = e.ProgressTitle;
-        })"
-    OnCompleted="@OnCompleted" />
+                 DragDropZoneVisible="false"
+                 Mode="InputFileMode.SaveToTemporaryFolder"
+                 Multiple="false"
+                 MaximumFileSize="@(20 * 1024)"
+                 AnchorId="SelectFileButton"
+                 Accept=".zsn, .json"
+                 OnProgressChange="@(e => { _progressPercent = e.ProgressPercent; _progressTitle = e.ProgressTitle; })"
+                 OnCompleted="@OnCompleted"/>
 
-<FluentProgress Min="0" Max="100" Visible="@(_progressPercent > 0)" Value="@_progressPercent" />
+<FluentProgress Min="0" Max="100" Visible="@(_progressPercent > 0)" Value="@_progressPercent"/>
 <FluentLabel Alignment="HorizontalAlignment.Center">
     @_progressTitle
 </FluentLabel>
@@ -44,11 +39,11 @@
 
     bool Deserialize(FileStream stream)
     {
-        var p = JsonSerializer.Deserialize<Project>(stream);
+        var p = Project.Deserialize(stream);
         if (p != null)
         {
             AppState.Project = p;
-            AppState.SelectedSheet = AppState.Project.Sheets.First();
+            AppState.StateHasChanged();
             return true;
         }
 
@@ -72,8 +67,10 @@
                     stream.Close();
                 }
             }
+
             file.LocalFile?.Delete();
         }
+
         NavigationManager.NavigateTo("/Zuschnitt");
     }
 }

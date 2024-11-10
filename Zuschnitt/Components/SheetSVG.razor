@@ -3,16 +3,16 @@
 @if (Sheet != null)
 {
     <svg viewBox="0 0 @Sheet.Width @Sheet.Height">
-        <rect id="@Sheet.Id.ToString()" x="0" y="0" width="@Sheet.Width" height="@Sheet.Height" stroke="@Sheet.Color" stroke-width="1" fill="@Sheet.FillColor" />
+        <rect id="@Sheet.Id.ToString()" x="0" y="0" width="@Sheet.Width" height="@Sheet.Height" stroke="@_strokeColor" stroke-width="1" fill="@FillColor(Sheet)"/>
         @{
             int x = 0;
             foreach (var column in Sheet.Columns)
             {
-                <rect id="@column.Id.ToString()" x="@x" y="0" width="@column.Width()" height="@Sheet.Height" stroke="@column.Color" stroke-width="1" fill="@column.FillColor" fill-opacity="@column.FillOpacity()" @onmouseleave="() => column.Highlighted = false" @onmouseenter="() => column.Highlighted = true" />
+                <rect id="@column.Id.ToString()" x="@x" y="0" width="@column.Width()" height="@Sheet.Height" stroke="@_strokeColor" stroke-width="1" fill="@FillColor(column)" fill-opacity="@FillOpacity(column)" @onmouseleave="() => column.Highlighted = false" @onmouseenter="() => column.Highlighted = true"/>
                 int y = 0;
                 foreach (var part in column.Parts)
                 {
-                    <rect id="@part.Id.ToString()" x="@x" y="@y" width="@part.Width" height="@part.Height" stroke="@part.Color" stroke-width="1" fill="@part.FillColor" fill-opacity="@part.FillOpacity()" @onmouseleave="() => part.Highlighted = false" @onmouseenter="() => part.Highlighted = true" @onclick="() => PartClicked.InvokeAsync(part)" @oncontextmenu:preventDefault="true"/>
+                    <rect id="@part.Id.ToString()" x="@x" y="@y" width="@part.Width" height="@part.Height" stroke="@_strokeColor" stroke-width="1" fill="@FillColor(part)" fill-opacity="@FillOpacity(part)" @onmouseleave="() => part.Highlighted = false" @onmouseenter="() => part.Highlighted = true" @onclick="() => PartClicked.InvokeAsync(part)" @oncontextmenu:preventDefault="true"/>
                     y += part.Height;
                 }
 
@@ -25,4 +25,35 @@
 @code {
     [Parameter] public Sheet? Sheet { get; set; }
     [Parameter] public EventCallback<Part> PartClicked { get; set; }
+
+    private string _strokeColor = "black";
+
+    private string FillColor(Sheet sheet)
+    {
+        return "lightgrey";
+    }
+
+    private string FillColor(Column column)
+    {
+        return "purple";
+    }
+
+    private double FillOpacity(Column column)
+    {
+        if (column.Highlighted) return 0.5;
+        return 0.1;
+    }
+
+    private string FillColor(Part part)
+    {
+        if (part.Done) return "blue";
+        return "green";
+    }
+
+    private double FillOpacity(Part part)
+    {
+        if (part.Highlighted) return 0.5;
+        return 0.1;
+    }
+
 }

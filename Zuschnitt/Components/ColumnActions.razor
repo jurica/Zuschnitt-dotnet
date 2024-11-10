@@ -2,21 +2,24 @@
 
 @inject AppState AppState;
 
-<FluentButton Id="@_id" IconStart="@(new Icons.Regular.Size20.LineHorizontal3())" OnClick="() => _showMenu = !_showMenu"/>
-<FluentMenu @bind-Open="_showMenu" Anchor="@_id">
-    <ActionMenuItem OnClick="AddPart" Text="Add Part" Icon="@(new Icons.Regular.Size20.AddCircle())"/>
-    <FluentDivider/>
-    <ActionMenuItem OnClick="AddColumn" Text="New Column" Icon="@(new Icons.Regular.Size20.New())"/>
-    <ActionMenuItem OnClick="CopyColumn" Text="Duplicate Column" Icon="@(new Icons.Regular.Size20.Copy())"/>
-    <FluentDivider/>
-    @foreach (var sheet in AppState.Project.Sheets)
-    {
-        if (sheet == AppState.SelectedSheet) continue;
-        <ActionMenuItem Icon="@(new Icons.Regular.Size20.TableMoveRight())" OnClick="() => Reassign(sheet)" Text="@($"Move to: {sheet.Name}")"/>
-    }
-    <FluentDivider/>
-    <ActionMenuItem Icon="@(new Icons.Regular.Size20.Delete())" OnClick="DeleteColumn" Text="Delete Column"/>
-</FluentMenu>
+@if (Column != null)
+{
+    <FluentButton Id="@_id" IconStart="@(new Icons.Regular.Size20.LineHorizontal3())" OnClick="() => _showMenu = !_showMenu"/>
+    <FluentMenu @bind-Open="_showMenu" Anchor="@_id">
+        <ActionMenuItem OnClick="AddPart" Text="Add Part" Icon="@(new Icons.Regular.Size20.AddCircle())"/>
+        <FluentDivider/>
+        <ActionMenuItem OnClick="AddColumn" Text="New Column" Icon="@(new Icons.Regular.Size20.New())"/>
+        <ActionMenuItem OnClick="CopyColumn" Text="Duplicate Column" Icon="@(new Icons.Regular.Size20.Copy())"/>
+        <FluentDivider/>
+        @foreach (var sheet in Column.Parent.Parent.Sheets)
+        {
+            if (sheet == Column.Parent.Parent.SelectedSheet) continue;
+            <ActionMenuItem Icon="@(new Icons.Regular.Size20.TableMoveRight())" OnClick="() => Reassign(sheet)" Text="@($"Move to: {sheet.Name}")"/>
+        }
+        <FluentDivider/>
+        <ActionMenuItem Icon="@(new Icons.Regular.Size20.Delete())" OnClick="DeleteColumn" Text="Delete Column"/>
+    </FluentMenu>
+}
 
 @code {
     [Parameter] public Column? Column { get; set; }
@@ -24,30 +27,29 @@
     private bool _showMenu = false;
     private string _id = Guid.NewGuid().ToString();
 
-    private void InsertColumn(Column column)
+    private void AddColumn()
     {
         _showMenu = false;
         if (Column == null) return;
-        AppState.SelectedSheet.Columns.Insert(AppState.SelectedSheet.Columns.IndexOf(Column)+1, column);
+        Column.Parent.AddColumn();
         AppState.StateHasChanged();
-    }
-
-    private void AddColumn()
-    {
-        InsertColumn(new Column());
     }
 
     private void CopyColumn()
     {
+        _showMenu = false;
         if (Column == null) return;
-        InsertColumn(new Column(Column));
+        Column.Copy();
+        AppState.StateHasChanged();
     }
 
     private void AddPart()
     {
         _showMenu = false;
         if (Column == null) return;
-        Column.Parts.Add(new Part());
+        
+        Column.AddPart();
+        
         AppState.StateHasChanged();
     }
 
@@ -55,10 +57,9 @@
     {
         _showMenu = false;
         if (Column == null) return;
-        if (newSheet.Columns.Contains(Column)) return;
-
-        AppState.SelectedSheet.Columns.Remove(Column);
-        newSheet.Columns.Add(Column);
+        
+        Column.Reassign(newSheet);
+        
         AppState.StateHasChanged();
     }
 
@@ -67,7 +68,8 @@
         _showMenu = false;
         if (Column == null) return;
 
-        AppState.SelectedSheet.Columns.Remove(Column);
+        Column.Delete();
+        
         AppState.StateHasChanged();
     }
 
