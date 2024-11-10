@@ -23,7 +23,7 @@
 
 
 @code {
-    [Parameter] Sheet? Sheet { get; set; }
+    [Parameter] public Sheet? Sheet { get; set; }
     
     private bool _showMenu = false;
     private string _id = Guid.NewGuid().ToString();
@@ -32,44 +32,39 @@
     {
         _showMenu = false;
         if (Sheet == null) return;
-        Sheet.de
-        AppState.Project.RemoveSheet(AppState.Project.SelectedSheet);
-        if (!AppState.Project.Sheets.Any())
-        {
-            AppState.Project.AddSheet();
-        }
-        AppState.Project.SelectedSheet = AppState.Project.Sheets.First();
-
+        Sheet.Delete();
         AppState.StateHasChanged();
     }
 
     private void AddSheet()
     {
         _showMenu = false;
-        AppState.Project.AddSheet();
+        if (Sheet == null) return;
+        Sheet.Parent.AddSheet();
         AppState.StateHasChanged();
     }
 
     private void CopySheet()
     {
         _showMenu = false;
-        AppState.Project.SelectedSheet.Copy();
-        // var copy = new Sheet(AppState.Project.SelectedSheet);
-        // AppState.Project.AddSheet(copy);
+        if (Sheet == null) return;
+        Sheet.Copy();
         AppState.StateHasChanged();
     }
 
     private void SelectSheet(Sheet sheet)
     {
         _showMenu = false;
-        AppState.Project.SelectedSheet = sheet;
+        if (Sheet == null) return;
+        Sheet.Parent.SelectedSheet = sheet;
         AppState.StateHasChanged();
     }
 
     private void AddColumn()
     {
         _showMenu = false;
-        AppState.Project.SelectedSheet.AddColumn();
+        if (Sheet == null) return;
+        Sheet.AddColumn();
         AppState.StateHasChanged();
     }
 

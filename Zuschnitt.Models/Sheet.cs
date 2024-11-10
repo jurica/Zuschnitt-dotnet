@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Text.Json.Serialization;
 
 namespace Zuschnitt.Models;
@@ -60,5 +59,10 @@ public class Sheet
     public int ColumnPos(Column column)
     {
         return _columns.IndexOf(column);
+    }
+
+    public void Delete()
+    {
+        _parent.DeleteSheet(this);
     }
 }
