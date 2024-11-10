@@ -25,17 +25,12 @@
     private void DeleteCurrentSheet()
     {
         _showMenu = false;
-        AppState.Project.Sheets.Remove(AppState.SelectedSheet);
+        AppState.Project.RemoveSheet(AppState.SelectedSheet);
         if (!AppState.Project.Sheets.Any())
         {
-            var sheet = new Sheet();
-            AppState.Project.Sheets.Add(sheet);
-            AppState.SelectedSheet = sheet;
+            AppState.Project.AddSheet();
         }
-        else
-        {
-            AppState.SelectedSheet = AppState.Project.Sheets.First();
-        }
+        AppState.SelectedSheet = AppState.Project.Sheets.First();
 
         AppState.StateHasChanged();
     }
@@ -43,13 +38,8 @@
     private void AddSheet()
     {
         _showMenu = false;
-        var sheet = new Sheet();
-        var column = new Column();
-        var part = new Part();
-        column.Parts.Add(part);
-        sheet.Columns.Add(column);
-        AppState.Project.Sheets.Add(sheet);
-        AppState.SelectedSheet = sheet;
+        AppState.Project.AddSheet();
+        AppState.SelectedSheet = AppState.Project.Sheets.Last();
         AppState.StateHasChanged();
     }
 
@@ -57,7 +47,7 @@
     {
         _showMenu = false;
         var copy = new Sheet(AppState.SelectedSheet);
-        AppState.Project.Sheets.Add(copy);
+        AppState.Project.AddSheet(copy);
         AppState.SelectedSheet = copy;
         AppState.StateHasChanged();
     }
@@ -72,7 +62,7 @@
     private void AddColumn()
     {
         _showMenu = false;
-        AppState.SelectedSheet.Columns.Add(new Column());
+        AppState.SelectedSheet.AddColumn();
         AppState.StateHasChanged();
     }
 

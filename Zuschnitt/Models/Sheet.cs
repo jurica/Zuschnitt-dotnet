@@ -6,19 +6,24 @@ public class Sheet
     public string Name { get; set; }
     public int Width { get; set; }
     public int Height { get; set; }
-    public string Color { get; set; }
-    public string FillColor { get; set; }
-    public List<Column> Columns { get; set; }
+
+    public IEnumerable<Column> Columns
+    {
+        get
+        {
+            foreach (var column in _columns) yield return column;
+        }
+    }
+    public List<Column> _columns { get; set; }
 
     public Sheet()
     {
         Id = Guid.NewGuid();
         Name = Id.ToString();
-        Width = 1250;
-        Height = 2500;
-        Color = "black";
-        FillColor = "lightgrey";
-        Columns = new ();
+        Width = 2500;
+        Height = 1250;
+        _columns = new ();
+        AddColumn();
     }
 
     public Sheet(Sheet sheet)
@@ -27,21 +32,39 @@ public class Sheet
         Name = $"{sheet.Name} copy";
         Width = sheet.Width;
         Height = sheet.Height;
-        Color = sheet.Color;
-        FillColor = sheet.FillColor;
-        Columns = new List<Column>();
-        sheet.Columns.ForEach(c => Columns.Add(new Column(c)));
+        _columns = new List<Column>();
+        sheet._columns.ForEach(c => _columns.Add(new Column(c)));
     }
 
     public int UsedHeight()
     {
-        if (Columns.Count == 0) return 0;
-        return Columns.Max(x => x.Height());
+        if (_columns.Count == 0) return 0;
+        return _columns.Max(x => x.Height());
     }
 
     public int UsedWidth()
     {
-        if (Columns.Count == 0) return 0;
-        return Columns.Sum(x => x.Width());
+        if (_columns.Count == 0) return 0;
+        return _columns.Sum(x => x.Width());
+    }
+
+    public void AddColumn()
+    {
+        AddColumn(new Column(this));
+    }
+    
+    public void AddColumn(Column column)
+    {
+        _columns.Add(column);
+    }
+
+    public bool RemoveColumn(Column column)
+    {
+        return _columns.Remove(column);
+    }
+
+    public int ColumnPos(Column column)
+    {
+        return _columns.IndexOf(column);
     }
 }

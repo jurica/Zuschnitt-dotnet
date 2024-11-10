@@ -21,12 +21,6 @@
     [Parameter] public Part? Part { get; set; }
     [Parameter] public Column? Column { get; set; }
 
-    private void DeletePart(Column column, Part part)
-    {
-        column.Parts.Remove(part);
-        AppState.StateHasChanged();
-    }
-
     private void HighlightOn()
     {
         if (Part == null) return;

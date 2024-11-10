@@ -1,5 +1,6 @@
 @using Zuschnitt.Models;
 @using System.Text.Json;
+@using System.Text.Json.Serialization
 
 @inject AppState AppState
 @inject NavigationManager NavigationManager
@@ -29,9 +30,14 @@
         string filename = "Zuschnitt";
         if (!string.IsNullOrEmpty(AppState.Project.Name)) filename = AppState.Project.Name;
         filename += ".zsn";
+        JsonSerializerOptions options = new()
+        {
+            ReferenceHandler = ReferenceHandler.Preserve,
+            WriteIndented = true
+        };
         JsRuntime.InvokeAsync<object>(
             "saveAsFile",
             filename,
-            Convert.ToBase64String(JsonSerializer.SerializeToUtf8Bytes(AppState.Project)));
+            Convert.ToBase64String(JsonSerializer.SerializeToUtf8Bytes(AppState.Project, options)));
     }
 }

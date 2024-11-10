@@ -28,26 +28,33 @@
     {
         _showMenu = false;
         if (Column == null) return;
-        AppState.SelectedSheet.Columns.Insert(AppState.SelectedSheet.Columns.IndexOf(Column)+1, column);
+        AppState.SelectedSheet.AddColumn(column);
         AppState.StateHasChanged();
     }
 
     private void AddColumn()
     {
-        InsertColumn(new Column());
+        _showMenu = false;
+        if (Column == null) return;
+        AppState.SelectedSheet.AddColumn(new Column(AppState.SelectedSheet));
+        AppState.StateHasChanged();
     }
 
     private void CopyColumn()
     {
+        _showMenu = false;
         if (Column == null) return;
-        InsertColumn(new Column(Column));
+        AppState.SelectedSheet.AddColumn(new Column(Column));
+        AppState.StateHasChanged();
     }
 
     private void AddPart()
     {
         _showMenu = false;
         if (Column == null) return;
-        Column.Parts.Add(new Part());
+        
+        Column.AddPart();
+        
         AppState.StateHasChanged();
     }
 
@@ -55,10 +62,9 @@
     {
         _showMenu = false;
         if (Column == null) return;
-        if (newSheet.Columns.Contains(Column)) return;
-
-        AppState.SelectedSheet.Columns.Remove(Column);
-        newSheet.Columns.Add(Column);
+        
+        Column.Reassign(newSheet);
+        
         AppState.StateHasChanged();
     }
 
@@ -67,7 +73,8 @@
         _showMenu = false;
         if (Column == null) return;
 
-        AppState.SelectedSheet.Columns.Remove(Column);
+        Column.Delete();
+        
         AppState.StateHasChanged();
     }
 

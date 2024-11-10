@@ -5,17 +5,38 @@ public class Project
 {
     public Guid Id { get; set; }
     public string Name { get; set; }
-    public List<Sheet> Sheets { get; set; }
-    [JsonIgnore]
-    public bool Editing { get; set; }
+
+    public IEnumerable<Sheet> Sheets
+    {
+        get
+        {
+           foreach (var sheet in _sheets) yield return sheet;
+        }
+    } 
+    [JsonIgnore] public bool Editing { get; set; }
+    private readonly List<Sheet> _sheets = new();
 
     public Project()
     {
         Id = Guid.NewGuid();
-        Sheets = new ();
         Name = "";
         Editing = false;
         
-        Sheets.Add(new Sheet());
+        AddSheet();
+    }
+
+    public void AddSheet()
+    {
+       _sheets.Add(new Sheet());
+    }
+
+    public void AddSheet(Sheet sheet)
+    {
+        _sheets.Add(sheet);
+    }
+
+    public void RemoveSheet(Sheet sheet)
+    {
+        _sheets.Remove(sheet);
     }
 }
