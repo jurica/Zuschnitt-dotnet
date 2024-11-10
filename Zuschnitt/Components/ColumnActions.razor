@@ -9,9 +9,9 @@
     <ActionMenuItem OnClick="AddColumn" Text="New Column" Icon="@(new Icons.Regular.Size20.New())"/>
     <ActionMenuItem OnClick="CopyColumn" Text="Duplicate Column" Icon="@(new Icons.Regular.Size20.Copy())"/>
     <FluentDivider/>
-    @foreach (var sheet in AppState.Project.Sheets)
+    @foreach (var sheet in Column.Parent.Parent.Sheets)
     {
-        if (sheet == AppState.SelectedSheet) continue;
+        if (sheet == Column.Parent.Parent.SelectedSheet) continue;
         <ActionMenuItem Icon="@(new Icons.Regular.Size20.TableMoveRight())" OnClick="() => Reassign(sheet)" Text="@($"Move to: {sheet.Name}")"/>
     }
     <FluentDivider/>
@@ -24,19 +24,11 @@
     private bool _showMenu = false;
     private string _id = Guid.NewGuid().ToString();
 
-    private void InsertColumn(Column column)
-    {
-        _showMenu = false;
-        if (Column == null) return;
-        AppState.SelectedSheet.AddColumn(column);
-        AppState.StateHasChanged();
-    }
-
     private void AddColumn()
     {
         _showMenu = false;
         if (Column == null) return;
-        AppState.SelectedSheet.AddColumn(new Column(AppState.SelectedSheet));
+        Column.Parent.AddColumn();
         AppState.StateHasChanged();
     }
 
@@ -44,7 +36,7 @@
     {
         _showMenu = false;
         if (Column == null) return;
-        AppState.SelectedSheet.AddColumn(new Column(Column));
+        Column.Copy();
         AppState.StateHasChanged();
     }
 

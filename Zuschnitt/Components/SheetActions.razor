@@ -11,7 +11,7 @@
     <FluentDivider/>
         @foreach (var sheet in AppState.Project.Sheets)
         {
-            if (sheet == AppState.SelectedSheet) continue;
+            if (sheet == AppState.Project.SelectedSheet) continue;
             <ActionMenuItem OnClick="() => SelectSheet(sheet)" Icon="@(new Icons.Regular.Size20.LayoutColumnTwoSplitRight())" Text="@($"Select: {sheet.Name}")"/>
         }
     <FluentDivider/>
@@ -25,12 +25,12 @@
     private void DeleteCurrentSheet()
     {
         _showMenu = false;
-        AppState.Project.RemoveSheet(AppState.SelectedSheet);
+        AppState.Project.RemoveSheet(AppState.Project.SelectedSheet);
         if (!AppState.Project.Sheets.Any())
         {
             AppState.Project.AddSheet();
         }
-        AppState.SelectedSheet = AppState.Project.Sheets.First();
+        AppState.Project.SelectedSheet = AppState.Project.Sheets.First();
 
         AppState.StateHasChanged();
     }
@@ -39,30 +39,29 @@
     {
         _showMenu = false;
         AppState.Project.AddSheet();
-        AppState.SelectedSheet = AppState.Project.Sheets.Last();
         AppState.StateHasChanged();
     }
 
     private void CopySheet()
     {
         _showMenu = false;
-        var copy = new Sheet(AppState.SelectedSheet);
-        AppState.Project.AddSheet(copy);
-        AppState.SelectedSheet = copy;
+        AppState.Project.SelectedSheet.Copy();
+        // var copy = new Sheet(AppState.Project.SelectedSheet);
+        // AppState.Project.AddSheet(copy);
         AppState.StateHasChanged();
     }
 
     private void SelectSheet(Sheet sheet)
     {
         _showMenu = false;
-        AppState.SelectedSheet = sheet;
+        AppState.Project.SelectedSheet = sheet;
         AppState.StateHasChanged();
     }
 
     private void AddColumn()
     {
         _showMenu = false;
-        AppState.SelectedSheet.AddColumn();
+        AppState.Project.SelectedSheet.AddColumn();
         AppState.StateHasChanged();
     }
 

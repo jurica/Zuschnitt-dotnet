@@ -3,36 +3,21 @@ using System.Text.Json.Serialization;
 namespace Zuschnitt.Models;
 public class Project 
 {
-    public Guid Id { get; set; }
-    public string Name { get; set; }
-
-    public IEnumerable<Sheet> Sheets
+    public Guid Id { get; init; } = Guid.NewGuid();
+    public string Name { get; set; } = "";
+    public Sheet? SelectedSheet { get; set; }
+    [JsonIgnore] public IEnumerable<Sheet> Sheets
     {
         get
         {
            foreach (var sheet in _sheets) yield return sheet;
         }
-    } 
-    [JsonIgnore] public bool Editing { get; set; }
-    private readonly List<Sheet> _sheets = new();
-
-    public Project()
-    {
-        Id = Guid.NewGuid();
-        Name = "";
-        Editing = false;
-        
-        AddSheet();
     }
-
+    [JsonInclude] internal List<Sheet> _sheets { get; init; } = new();
+    
     public void AddSheet()
     {
-       _sheets.Add(new Sheet());
-    }
-
-    public void AddSheet(Sheet sheet)
-    {
-        _sheets.Add(sheet);
+        new Sheet(){Parent = this};
     }
 
     public void RemoveSheet(Sheet sheet)

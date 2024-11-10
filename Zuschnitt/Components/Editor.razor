@@ -5,14 +5,14 @@
 <FluentSplitter Orientation="Orientation.Horizontal" style="width: 100%; height: 100%">
     <Panel1>
         <div Style="padding: 10px;">
-            <SheetSelector Sheet="AppState.SelectedSheet"/>
-            <SheetSVG Sheet="AppState.SelectedSheet" PartClicked="PartClicked" />
+            <SheetSelector Sheet="AppState.Project.SelectedSheet"/>
+            <SheetSVG Sheet="AppState.Project.SelectedSheet" PartClicked="PartClicked" />
         </div>
     </Panel1>
     <Panel2>
         <FluentHorizontalScroll @ref="_horizontalScroll" View="HorizontalScrollView.Mobile" Style="--scroll-align: flex-start; padding: 10px">
             @{
-                foreach (var column in AppState.SelectedSheet.Columns)
+                foreach (var column in AppState.Project.SelectedSheet.Columns)
                 {
                     <ColumnCard Column="column"/>
                 }

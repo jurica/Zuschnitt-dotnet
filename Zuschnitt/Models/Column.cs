@@ -4,30 +4,44 @@ namespace Zuschnitt.Models;
 
 public class Column 
 {
-    public Guid Id { get; set; }
-    public IEnumerable<Part> Parts
+    public Guid Id { get; init; } = Guid.NewGuid();
+    public required Sheet Parent
+    {
+        get => _parent;
+        init
+        {
+            _parent = value;
+            _parent._columns.Add(this);
+        }
+    }
+    private Sheet _parent;
+    [JsonIgnore] public IEnumerable<Part> Parts
     {
         get
         {
             foreach (var part in _parts) yield return part;
         }
     }
-    private readonly List<Part> _parts = new();
-    private Sheet Parent { get; set; }
+    [JsonInclude] internal List<Part> _parts = new();
     [JsonIgnore] public bool Highlighted { get; set; }
 
-    public Column(Sheet parent)
+    // public Column(Sheet parent)
+    // {
+    //     Id = Guid.NewGuid();
+    //     Parent = parent;
+    //     AddPart();
+    // }
+    //
+    public void Copy()
     {
-        Id = Guid.NewGuid();
-        Parent = parent;
-        AddPart();
+        var copy = new Column() { Parent = this.Parent };
+        _parts.ForEach(p => p.CopyTo(copy));
     }
     
-    public Column(Column column)
+    public void CopyTo(Sheet sheet)
     {
-        Id = Guid.NewGuid();
-        Parent = column.Parent;
-        column._parts.ForEach(p => p.CopyTo(this));
+        var copy = new Column() { Parent = sheet };
+        _parts.ForEach(p => p.CopyTo(copy));
     }
 
     public int Height()
@@ -48,24 +62,22 @@ public class Column
     {
         if (newSheet.Columns.Contains(this)) return;
 
-        Parent.RemoveColumn(this);
-        Parent = newSheet;
-        Parent.AddColumn(this);
+        Parent._columns.Remove(this);
+        _parent = newSheet;
+        Parent._columns.Add(this);
     }
 
     public void Delete()
     {
-        Parent.RemoveColumn(this);
+        Parent._columns.Remove(this);
     }
 
     public void AddPart()
     {
-        new Part(this);
-    }
-    
-    public void AddPart(Part part)
-    {
-        _parts.Add(part); 
+        var part = new Part()
+        {
+            Parent = this
+        };
     }
 
     public bool RemovePart(Part part)

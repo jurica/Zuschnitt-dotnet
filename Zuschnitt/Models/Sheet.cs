@@ -1,39 +1,40 @@
+using System.Diagnostics;
+using System.Text.Json.Serialization;
+
 namespace Zuschnitt.Models;
 
 public class Sheet 
 {
-    public Guid Id { get; set; }
-    public string Name { get; set; }
-    public int Width { get; set; }
-    public int Height { get; set; }
+    public Guid Id { get; init; } = Guid.NewGuid();
+    public string Name { get; set; } = "";
+    public int Width { get; set; } = 2500;
+    public int Height { get; set; } = 1250;
 
-    public IEnumerable<Column> Columns
+    public required Project Parent
+    {
+        get => _parent;
+        init
+        {
+            _parent = value;
+            _parent._sheets.Add(this);
+            _parent.SelectedSheet = this;
+        }
+    }
+    private Project _parent;
+    [JsonIgnore] public IEnumerable<Column> Columns
     {
         get
         {
             foreach (var column in _columns) yield return column;
         }
     }
-    public List<Column> _columns { get; set; }
+    [JsonInclude] internal List<Column> _columns { get; init; } = new();
 
-    public Sheet()
+    public void Copy()
     {
-        Id = Guid.NewGuid();
-        Name = Id.ToString();
-        Width = 2500;
-        Height = 1250;
-        _columns = new ();
-        AddColumn();
-    }
-
-    public Sheet(Sheet sheet)
-    {
-        Id = Guid.NewGuid();
-        Name = $"{sheet.Name} copy";
-        Width = sheet.Width;
-        Height = sheet.Height;
-        _columns = new List<Column>();
-        sheet._columns.ForEach(c => _columns.Add(new Column(c)));
+        var copy = new Sheet() { Parent = Parent, Name = $"{Name} copy"};
+        _columns.ForEach(c => c.CopyTo(copy));
+        Parent.SelectedSheet = copy;
     }
 
     public int UsedHeight()
@@ -50,17 +51,10 @@ public class Sheet
 
     public void AddColumn()
     {
-        AddColumn(new Column(this));
-    }
-    
-    public void AddColumn(Column column)
-    {
-        _columns.Add(column);
-    }
-
-    public bool RemoveColumn(Column column)
-    {
-        return _columns.Remove(column);
+        var column = new Column
+        {
+            Parent = this
+        };
     }
 
     public int ColumnPos(Column column)
