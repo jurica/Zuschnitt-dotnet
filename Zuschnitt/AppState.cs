@@ -13,7 +13,7 @@ public class AppState
     {
         Project = new Project();
         SelectedSheet = Project.Sheets.First();
-        //InitWithTestdata();
+        InitWithTestdata();
     }
 
     private void InitWithTestdata()

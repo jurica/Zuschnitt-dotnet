@@ -4,6 +4,7 @@
 
 <FluentButton Id="@_id" IconStart="@(new Icons.Regular.Size20.LineHorizontal3())" OnClick="() => _showMenu = !_showMenu"/>
 <FluentMenu @bind-Open="_showMenu" Anchor="@_id" UseMenuService="true" VerticalThreshold="170">
+    <ActionMenuCheckbox Text="Part done" @bind-Checked="Part.Done" CheckedChanged="AppState.StateHasChanged" />
     <ActionMenuItem OnClick="CopyPart" Text="Duplicate part" Icon="@(new Icons.Regular.Size20.Copy())" />
     <FluentDivider/>
     @foreach (var column in AppState.SelectedSheet.Columns)

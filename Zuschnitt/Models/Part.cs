@@ -9,7 +9,7 @@ public class Part
     public int Width { get; set; }
     public int Height { get; set; }
     public string Color { get; set; }
-    public string FillColor { get; set; }
+    public bool Done { get; set; }
     [JsonIgnore]
     public bool Highlighted { get; set; }
     [JsonIgnore]
@@ -22,8 +22,8 @@ public class Part
         Width = 50;
         Height = 50;
         Color = "black";
-        FillColor = "green";
         Highlighted = false;
+        Done = false;
     }
     
     public Part(Part part)
@@ -33,8 +33,8 @@ public class Part
         Width = part.Width;
         Height = part.Height;
         Color = part.Color;
-        FillColor = part.FillColor;
         Highlighted = false;
+        Done = false;
     }
 
     public double FillOpacity()
