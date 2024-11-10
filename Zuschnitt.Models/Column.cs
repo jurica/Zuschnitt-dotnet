@@ -25,13 +25,6 @@ public class Column
     [JsonInclude] internal List<Part> _parts = new();
     [JsonIgnore] public bool Highlighted { get; set; }
 
-    // public Column(Sheet parent)
-    // {
-    //     Id = Guid.NewGuid();
-    //     Parent = parent;
-    //     AddPart();
-    // }
-    //
     public void Copy()
     {
         var copy = new Column() { Parent = this.Parent };

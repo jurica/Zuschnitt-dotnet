@@ -20,19 +20,6 @@ public class Part
     }
     private Column _parent;
     [JsonIgnore] public bool Highlighted { get; set; } = false;
-
-    //
-    // private Part(Part part, Column parent)
-    // {
-    //     Id = Guid.NewGuid();
-    //     Name = $"{part.Name} copy";
-    //     Width = part.Width;
-    //     Height = part.Height;
-    //     Highlighted = false;
-    //     Done = false;
-    //     Parent = parent;
-    //     Parent.AddPart(this);
-    // }
     
     public void Reassign(Column newColumn)
     {
