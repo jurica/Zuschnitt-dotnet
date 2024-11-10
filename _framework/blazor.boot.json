@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "Zuschnitt",
   "resources": {
-    "hash": "sha256-OoVDBaf2HSEJgdGqXemeZBzBtHNmUAhVQb8KwDr57RU=",
+    "hash": "sha256-ay4xGu/gH2YgFn2AiRTwZfPv9sJDeeR+Gs/iAEJ5wAs=",
     "jsModuleNative": {
       "dotnet.native.8.0.10.bh5gg4yrwv.js": "sha256-bbICgjMo8SzYb5Hspg98dGN4T/Z0QENEbumIyLcnB2M="
     },
@@ -57,8 +57,8 @@
       "System.Text.RegularExpressions.wasm": "sha256-jOXHeQGxYgoiX8kfuXmM8pdDxV74D+IHq+znvu9UKmA=",
       "System.Threading.wasm": "sha256-942pSKu/NRclDZZvbRxDycMEL2PUdLwiP0/0qw8+lJY=",
       "System.wasm": "sha256-sH9OCj7JF+EjOteWJIPR1TDeb2POsT3uyJpKHPmvz2A=",
-      "Zuschnitt.Models.wasm": "sha256-46JhLtEBGsJPbExakfrRXOLaxbUdUHz7wHPokyP6bCM=",
-      "Zuschnitt.wasm": "sha256-8Z32Xukc8JIduug1LswHg8hvtZWOrjBYozCysZVsNY0="
+      "Zuschnitt.Models.wasm": "sha256-DzL5ypXgvqmwMbgOA2ZD4q/H3iTFOt0knjmt/vFf924=",
+      "Zuschnitt.wasm": "sha256-cwz2G53e/ErsItS2mcAbbhSTia3wKVezjgyK4L108Lk="
     },
     "libraryInitializers": {
       "_content/Microsoft.FluentUI.AspNetCore.Components/Microsoft.FluentUI.AspNetCore.Components.lib.module.js": "sha256-/LPTy2KpNBBYdj9b6lNMDILfmbdqo+FWKCFS6WQd0mU="
