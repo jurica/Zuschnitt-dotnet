@@ -2,29 +2,37 @@
 
 @inject AppState AppState;
 
-<FluentButton Id="@_id" IconStart="@(new Icons.Regular.Size20.LineHorizontal3())" OnClick="() => _showMenu = !_showMenu"/>
-<FluentMenu @bind-Open="_showMenu" Anchor="@_id">
-    <ActionMenuItem OnClick="AddColumn" Icon="@(new Icons.Regular.Size20.AddCircle())" Text="Add Column"/>
-    <FluentDivider/>
-    <ActionMenuItem OnClick="AddSheet" Icon="@(new Icons.Regular.Size20.New())" Text="New sheet"/>
-    <ActionMenuItem OnClick="CopySheet" Icon="@(new Icons.Regular.Size20.Copy())" Text="Duplicate Sheet"/>
-    <FluentDivider/>
-        @foreach (var sheet in AppState.Project.Sheets)
+@if (Sheet != null)
+{
+    <FluentButton Id="@_id" IconStart="@(new Icons.Regular.Size20.LineHorizontal3())" OnClick="() => _showMenu = !_showMenu"/>
+    <FluentMenu @bind-Open="_showMenu" Anchor="@_id">
+        <ActionMenuItem OnClick="AddColumn" Icon="@(new Icons.Regular.Size20.AddCircle())" Text="Add Column"/>
+        <FluentDivider/>
+        <ActionMenuItem OnClick="AddSheet" Icon="@(new Icons.Regular.Size20.New())" Text="New sheet"/>
+        <ActionMenuItem OnClick="CopySheet" Icon="@(new Icons.Regular.Size20.Copy())" Text="Duplicate Sheet"/>
+        <FluentDivider/>
+        @foreach (var sheet in Sheet.Parent.Sheets)
         {
-            if (sheet == AppState.Project.SelectedSheet) continue;
+            if (sheet == Sheet) continue;
             <ActionMenuItem OnClick="() => SelectSheet(sheet)" Icon="@(new Icons.Regular.Size20.LayoutColumnTwoSplitRight())" Text="@($"Select: {sheet.Name}")"/>
         }
-    <FluentDivider/>
-    <ActionMenuItem OnClick="DeleteCurrentSheet" Icon="@(new Icons.Regular.Size20.Delete())" Text="Delete sheet"/>
-</FluentMenu>
+        <FluentDivider/>
+        <ActionMenuItem OnClick="DeleteCurrentSheet" Icon="@(new Icons.Regular.Size20.Delete())" Text="Delete sheet"/>
+    </FluentMenu>
+}
+
 
 @code {
+    [Parameter] Sheet? Sheet { get; set; }
+    
     private bool _showMenu = false;
     private string _id = Guid.NewGuid().ToString();
 
     private void DeleteCurrentSheet()
     {
         _showMenu = false;
+        if (Sheet == null) return;
+        Sheet.de
         AppState.Project.RemoveSheet(AppState.Project.SelectedSheet);
         if (!AppState.Project.Sheets.Any())
         {
