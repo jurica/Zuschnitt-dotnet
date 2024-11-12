@@ -3,11 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zuschnitt", "Zuschnitt\Zuschnitt.csproj", "{6D412E09-19BD-4A26-9EA7-E47801652305}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zuschnitt.Blazor.Wasm", "Zuschnitt.Blazor.Wasm\Zuschnitt.Blazor.Wasm.csproj", "{6D412E09-19BD-4A26-9EA7-E47801652305}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zuschnitt.Models", "Zuschnitt.Models\Zuschnitt.Models.csproj", "{3CF18819-81BF-43AF-A1FF-CD59AE5E0700}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Zuschnitt.Models", "Test.Zuschnitt.Models\Test.Zuschnitt.Models.csproj", "{461FBB87-9B47-47C2-BA0D-7132396A98F5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zuschnitt.Models.Test", "Zuschnitt.Models.Test\Zuschnitt.Models.Test.csproj", "{461FBB87-9B47-47C2-BA0D-7132396A98F5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zuschnitt.Blazor.Photino", "Zuschnitt.Blazor.Photino\Zuschnitt.Blazor.Photino.csproj", "{2D7C6A07-3B00-46AF-BCED-9B1A31426DC0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zuschnitt.Razor", "Zuschnitt.Razor\Zuschnitt.Razor.csproj", "{C49A577A-2425-45C6-83B8-36DF768A447C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +31,14 @@ Global
 		{461FBB87-9B47-47C2-BA0D-7132396A98F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{461FBB87-9B47-47C2-BA0D-7132396A98F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{461FBB87-9B47-47C2-BA0D-7132396A98F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D7C6A07-3B00-46AF-BCED-9B1A31426DC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D7C6A07-3B00-46AF-BCED-9B1A31426DC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D7C6A07-3B00-46AF-BCED-9B1A31426DC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D7C6A07-3B00-46AF-BCED-9B1A31426DC0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C49A577A-2425-45C6-83B8-36DF768A447C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C49A577A-2425-45C6-83B8-36DF768A447C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C49A577A-2425-45C6-83B8-36DF768A447C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C49A577A-2425-45C6-83B8-36DF768A447C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

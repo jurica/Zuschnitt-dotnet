@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <RootNamespace>photino.Zuschnitt</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Photino.Blazor" Version="3.2.0" />
+      <PackageReference Include="Photino.Native" Version="3.2.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Zuschnitt.Razor\Zuschnitt.Razor.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="wwwroot\**" CopyToOutputDirectory="PreserveNewest" LinkBase="wwwroot\" />
+    </ItemGroup>
+
+</Project>

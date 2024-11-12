@@ -14,7 +14,7 @@ public class Column
             _parent._columns.Add(this);
         }
     }
-    private Sheet _parent;
+    private Sheet _parent = null!;
     [JsonIgnore] public IEnumerable<Part> Parts
     {
         get
