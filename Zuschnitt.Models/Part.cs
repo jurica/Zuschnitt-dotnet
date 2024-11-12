@@ -18,7 +18,7 @@ public class Part
             _parent._parts.Add(this);
         }
     }
-    private Column _parent;
+    private Column _parent = null!;
     [JsonIgnore] public bool Highlighted { get; set; } = false;
     
     public void Reassign(Column newColumn)

@@ -1,7 +1,6 @@
-using Zuschnitt.Models;
 using System.Text.Json;
 
-namespace Zuschnitt;
+namespace Zuschnitt.Models;
 
 public class AppState
 {

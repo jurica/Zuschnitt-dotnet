@@ -19,7 +19,7 @@ public class Sheet
             _parent.SelectedSheet = this;
         }
     }
-    private Project _parent;
+    private Project _parent = null!;
     [JsonIgnore] public IEnumerable<Column> Columns
     {
         get
