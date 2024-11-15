@@ -36,10 +36,10 @@
         return "purple";
     }
 
-    private double FillOpacity(Column column)
+    private string FillOpacity(Column column)
     {
-        if (column.Highlighted) return 0.5;
-        return 0.1;
+        if (column.Highlighted) return "0.5";
+        return "0.1";
     }
 
     private string FillColor(Part part)
@@ -48,10 +48,10 @@
         return "green";
     }
 
-    private double FillOpacity(Part part)
+    private string FillOpacity(Part part)
     {
-        if (part.Highlighted) return 0.5;
-        return 0.1;
+        if (part.Highlighted) return "0.5";
+        return "0.1";
     }
 
 }

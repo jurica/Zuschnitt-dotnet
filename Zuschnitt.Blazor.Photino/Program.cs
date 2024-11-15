@@ -5,26 +5,36 @@ using Photino.Blazor;
 using Zuschnitt.Razor;
 using Zuschnitt.Models;
 
-var builder = PhotinoBlazorAppBuilder.CreateDefault(args);
-          
-builder.Services
-    .AddLogging();
-
-builder.RootComponents.Add<App>("#app");
-builder.RootComponents.Add<HeadOutlet>("head::after");
-
-builder.Services.AddFluentUIComponents();
-builder.Services.AddSingleton<AppState>();
-
-var app = builder.Build();
-
-app.MainWindow
-    //.SetIconFile(favicon.ico)
-    .SetTitle("Zuschnitt");
-
-AppDomain.CurrentDomain.UnhandledException += (sender, error) =>
+namespace Zuschnitt.Blazor.Photino
 {
-    app.MainWindow.ShowMessage("Fatal exception", error.ExceptionObject.ToString());
-};
+    static class Program
+    {
+        [STAThread]
+        static void Main(string[] args)
+        {
+            var builder = PhotinoBlazorAppBuilder.CreateDefault(args);
 
-app.Run();
+            builder.Services
+                .AddLogging();
+
+            builder.RootComponents.Add<App>("#app");
+            builder.RootComponents.Add<HeadOutlet>("head::after");
+
+            builder.Services.AddFluentUIComponents();
+            builder.Services.AddSingleton<AppState>();
+
+            var app = builder.Build();
+
+            app.MainWindow
+                //.SetIconFile(favicon.ico)
+                .SetTitle("Zuschnitt");
+
+            AppDomain.CurrentDomain.UnhandledException += (sender, error) =>
+            {
+                app.MainWindow.ShowMessage("Fatal exception", error.ExceptionObject.ToString());
+            };
+
+            app.Run();
+        }
+    }
+}
