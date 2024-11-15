@@ -1,6 +1,6 @@
 @if (Sheet != null)
 {
-    <svg viewBox="0 0 @Sheet.Width @Sheet.Height">
+    <svg viewBox="0 0 @Sheet.Width @Sheet.Height" id="popoverAnchor">
         <rect id="@Sheet.Id.ToString()" x="0" y="0" width="@Sheet.Width" height="@Sheet.Height" stroke="@_strokeColor" stroke-width="1" fill="@FillColor(Sheet)"/>
         @{
             int x = 0;

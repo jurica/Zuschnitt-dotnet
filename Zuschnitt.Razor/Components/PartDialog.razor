@@ -1,0 +1,11 @@
+@implements IDialogContentComponent<Part>
+
+<FluentHeader>TEST dialog</FluentHeader>
+
+@Content.Width x @Content.Height
+<PartCard Part="Content" Column="Content.Parent"></PartCard>
+
+@code {
+    [Parameter]
+    public Part Content { get; set; } = default!;
+}

@@ -1,4 +1,5 @@
 @inject AppState AppState;
+@inject IDialogService DialogService;
 
 @if (AppState.Project.SelectedSheet != null)
 {
@@ -25,14 +26,20 @@
 @code
 {
     FluentHorizontalScroll _horizontalScroll = default!;
+    FluentPopover _popover = default;
+    PartCard _partCard = default;
+    private Part _part = default;
+    private Column _col = default;
 
     protected override void OnInitialized()
     {
         AppState.OnStateChange += StateHasChanged;
     }
 
-    public void PartClicked(Part part)
+    private async Task PartClicked(Part part)
     {
-        _horizontalScroll.ScrollInView(part.Parent.Pos());
+        IDialogReference dialog = await DialogService.ShowDialogAsync<PartDialog>(part, new DialogParameters());
+        await dialog.Result;
+        //_horizontalScroll.ScrollInView(part.Parent.Pos());
     }
 }
