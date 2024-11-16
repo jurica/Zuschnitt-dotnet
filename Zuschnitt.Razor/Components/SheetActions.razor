@@ -9,12 +9,6 @@
         <ActionMenuItem OnClick="AddSheet" Icon="@(new Icons.Regular.Size20.New())" Text="New sheet"/>
         <ActionMenuItem OnClick="CopySheet" Icon="@(new Icons.Regular.Size20.Copy())" Text="Duplicate Sheet"/>
         <FluentDivider/>
-        @foreach (var sheet in Sheet.Parent.Sheets)
-        {
-            if (sheet == Sheet) continue;
-            <ActionMenuItem OnClick="() => SelectSheet(sheet)" Icon="@(new Icons.Regular.Size20.LayoutColumnTwoSplitRight())" Text="@($"Select: {sheet.Name}")"/>
-        }
-        <FluentDivider/>
         <ActionMenuItem OnClick="DeleteCurrentSheet" Icon="@(new Icons.Regular.Size20.Delete())" Text="Delete sheet"/>
     </FluentMenu>
 }
@@ -47,14 +41,6 @@
         _showMenu = false;
         if (Sheet == null) return;
         Sheet.Copy();
-        AppState.StateHasChanged();
-    }
-
-    private void SelectSheet(Sheet sheet)
-    {
-        _showMenu = false;
-        if (Sheet == null) return;
-        Sheet.Parent.SelectedSheet = sheet;
         AppState.StateHasChanged();
     }
 

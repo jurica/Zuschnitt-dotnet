@@ -11,7 +11,7 @@
         <FluentDivider/>
         @foreach (var sheet in Column.Parent.Parent.Sheets)
         {
-            if (sheet == Column.Parent.Parent.SelectedSheet) continue;
+            if (sheet == Column.Parent) continue;
             <ActionMenuItem Icon="@(new Icons.Regular.Size20.TableMoveRight())" OnClick="() => Reassign(sheet)" Text="@($"Move to: {sheet.Name}")"/>
         }
         <FluentDivider/>

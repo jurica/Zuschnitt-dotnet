@@ -1,0 +1,30 @@
+@inject AppState AppState
+
+@if (Sheet != null)
+{
+    <div style="padding-left:5px; display: flex; justify-content: space-between; @(Sheet.Highlighted ? "background: #e0e0e0" : "")" @onmouseenter="HighlightOn" @onmouseleave="HighlightOff">
+        <SheetActions Sheet="Sheet"/>
+        <FluentTextField @bind-Value=Sheet.Name Style="width: 200px"></FluentTextField>
+        <FluentNumberField @bind-Value=Sheet.Width Style="width: 60px;" HideStep="true"></FluentNumberField>
+        <FluentNumberField @bind-Value=Sheet.Height Style="width: 60px;" HideStep="true"></FluentNumberField>
+    </div>
+}
+
+@code {
+    [Parameter] public Sheet? Sheet { get; set; }
+
+    private void HighlightOn()
+    {
+        if (Sheet == null) return;
+        Sheet.Highlighted = true;
+        AppState.StateHasChanged();
+    }
+
+    private void HighlightOff()
+    {
+        if (Sheet == null) return;
+        Sheet.Highlighted = false;
+        AppState.StateHasChanged();
+    }
+
+}

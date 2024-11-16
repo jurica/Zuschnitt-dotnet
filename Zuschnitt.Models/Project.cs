@@ -7,7 +7,6 @@ public class Project
 {
     public Guid Id { get; init; } = Guid.NewGuid();
     public string Name { get; set; } = "";
-    public Sheet? SelectedSheet { get; set; }
 
     [JsonIgnore]
     public IEnumerable<Sheet> Sheets
@@ -40,10 +39,6 @@ public class Project
         if (!_sheets.Any())
         {
             AddSheet();
-        }
-        else
-        {
-            SelectedSheet = _sheets.First();
         }
     }
 

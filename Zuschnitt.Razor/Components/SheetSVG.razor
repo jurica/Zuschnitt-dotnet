@@ -1,16 +1,54 @@
+@inject AppState AppState
+
 @if (Sheet != null)
 {
-    <svg viewBox="0 0 @Sheet.Width @Sheet.Height" id="popoverAnchor">
-        <rect id="@Sheet.Id.ToString()" x="0" y="0" width="@Sheet.Width" height="@Sheet.Height" stroke="@_strokeColor" stroke-width="1" fill="@FillColor(Sheet)"/>
+    <svg viewBox="0 0 @Sheet.Width @Sheet.Height">
+        <defs>
+            <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%" spreadMethod="pad">
+                <stop offset="0%" stop-color="lightgrey" stop-opacity="0.1"></stop>
+                <stop offset="100%" stop-color="lightgrey" stop-opacity="0.25"></stop>
+            </linearGradient>
+            <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%" spreadMethod="pad">
+                <stop offset="0%" stop-color="#8A161B" stop-opacity="0.1"></stop>
+                <stop offset="100%" stop-color="#8A161B" stop-opacity="0.25"></stop>
+            </linearGradient>
+            <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="100%" spreadMethod="pad">
+                <stop offset="0%" stop-color="#B39100" stop-opacity="0.1"></stop>
+                <stop offset="100%" stop-color="#B39100" stop-opacity="0.25"></stop>
+            </linearGradient>
+            <linearGradient id="gradient3" x1="0%" y1="0%" x2="100%" y2="100%" spreadMethod="pad">
+                <stop offset="0%" stop-color="#00533F" stop-opacity="0.1"></stop>
+                <stop offset="100%" stop-color="#00533F" stop-opacity="0.25"></stop>
+            </linearGradient>
+            <linearGradient id="gradient4" x1="0%" y1="0%" x2="100%" y2="100%" spreadMethod="pad">
+                <stop offset="0%" stop-color="#AA5600" stop-opacity="0.1"></stop>
+                <stop offset="100%" stop-color="#AA5600" stop-opacity="0.25"></stop>
+            </linearGradient>
+            <linearGradient id="gradient5" x1="0%" y1="0%" x2="100%" y2="100%" spreadMethod="pad">
+                <stop offset="0%" stop-color="#6E3A68" stop-opacity="0.1"></stop>
+                <stop offset="100%" stop-color="#6E3A68" stop-opacity="0.25"></stop>
+            </linearGradient>
+        </defs>
+        <rect id="@Sheet.Id.ToString()" x="0" y="0" width="@Sheet.Width" height="@Sheet.Height" stroke="@_strokeColor"
+              stroke-width="1" fill="@FillColor(Sheet)"
+              @onmouseleave="() => HighlightOff(Sheet)"
+              @onmouseenter="() => HighlightOn(Sheet)"/>
         @{
             int x = 0;
             foreach (var column in Sheet.Columns)
             {
-                <rect id="@column.Id.ToString()" x="@x" y="0" width="@column.Width()" height="@Sheet.Height" stroke="@_strokeColor" stroke-width="1" fill="@FillColor(column)" fill-opacity="@FillOpacity(column)" @onmouseleave="() => column.Highlighted = false" @onmouseenter="() => column.Highlighted = true"/>
+                <rect id="@column.Id.ToString()" x="@x" y="0" width="@column.Width()" height="@Sheet.Height"
+                      stroke="@_strokeColor" stroke-width="1" fill="@FillColor(column)"
+                      @onmouseleave="() => HighlightOff(column)"
+                      @onmouseenter="() => HighlightOn(column)"/>
                 int y = 0;
                 foreach (var part in column.Parts)
                 {
-                    <rect id="@part.Id.ToString()" x="@x" y="@y" width="@part.Width" height="@part.Height" stroke="@_strokeColor" stroke-width="1" fill="@FillColor(part)" fill-opacity="@FillOpacity(part)" @onmouseleave="() => part.Highlighted = false" @onmouseenter="() => part.Highlighted = true" @onclick="() => PartClicked.InvokeAsync(part)" @oncontextmenu:preventDefault="true"/>
+                    <rect id="@part.Id.ToString()" x="@x" y="@y" width="@part.Width" height="@part.Height"
+                          stroke="@_strokeColor" stroke-width="1" fill="@FillColor(part)"
+                          @onmouseleave="() => HighlightOff(part)"
+                          @onmouseenter="() => HighlightOn(part)" @onclick="() => PartClicked.InvokeAsync(part)"
+                          @oncontextmenu:preventDefault="true"/>
                     y += part.Height;
                 }
 
@@ -28,30 +66,63 @@
 
     private string FillColor(Sheet sheet)
     {
-        return "lightgrey";
+        if (sheet.Highlighted) return "url(#gradient5)";
+        return "url(#gradient)";
     }
 
     private string FillColor(Column column)
     {
-        return "purple";
-    }
-
-    private string FillOpacity(Column column)
-    {
-        if (column.Highlighted) return "0.5";
-        return "0.1";
+        if (column.Highlighted) return "url(#gradient5)";
+        return "url(#gradient2)";
     }
 
     private string FillColor(Part part)
     {
-        if (part.Done) return "blue";
-        return "green";
+        if (part.Highlighted) return "url(#gradient)";
+        if (part.Done) return "url(#gradient3)";
+        return "url(#gradient1)";
     }
 
-    private string FillOpacity(Part part)
+    private void HighlightOn(Part part)
     {
-        if (part.Highlighted) return "0.5";
-        return "0.1";
+        part.Highlighted = true;
+        part.Parent.Highlighted = true;
+        part.Parent.Parent.Highlighted = true;
+        AppState.StateHasChanged();
+    }
+
+    private void HighlightOff(Part part)
+    {
+        part.Highlighted = false;
+        part.Parent.Highlighted = false;
+        part.Parent.Parent.Highlighted = false;
+        AppState.StateHasChanged();
+    }
+
+    private void HighlightOn(Column column)
+    {
+        column.Highlighted = true;
+        column.Parent.Highlighted = true;
+        AppState.StateHasChanged();
+    }
+
+    private void HighlightOff(Column column)
+    {
+        column.Highlighted = false;
+        column.Parent.Highlighted = false;
+        AppState.StateHasChanged();
+    }
+
+    private void HighlightOn(Sheet sheet)
+    {
+        sheet.Highlighted = true;
+        AppState.StateHasChanged();
+    }
+
+    private void HighlightOff(Sheet sheet)
+    {
+        sheet.Highlighted = false;
+        AppState.StateHasChanged();
     }
 
 }

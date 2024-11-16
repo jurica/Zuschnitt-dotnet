@@ -9,7 +9,7 @@
         <FluentDivider/>
         @foreach (var column in Part.Parent.Parent.Columns)
         {
-            if (column == Column) continue;
+            if (column == Part.Parent) continue;
             <ActionMenuItem OnClick="() => Reassign(column)" Text="@($"Move to: #{column.Pos() + 1}")" Icon="@(new Icons.Regular.Size20.TableMoveRight())"/>
         }
         <FluentDivider/>
@@ -19,7 +19,6 @@
 
 @code {
     [Parameter] public Part? Part { get; set; }
-    [Parameter] public Column? Column { get; set; }
 
     private bool _showMenu = false;
     private string _id = Guid.NewGuid().ToString();

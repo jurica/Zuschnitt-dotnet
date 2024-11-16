@@ -1,35 +1,49 @@
 @inject AppState AppState;
-@inject IDialogService DialogService;
+@inject IJSRuntime JsRuntime;
 
-@if (AppState.Project.SelectedSheet != null)
+@if (AppState.Project != null)
 {
-    <FluentSplitter Orientation="Orientation.Horizontal" style="width: 100%; height: 100%">
-        <Panel1>
-            <div Style="padding: 10px;">
-                <SheetSelector Sheet="AppState.Project.SelectedSheet"/>
-                <SheetSVG Sheet="AppState.Project.SelectedSheet" PartClicked="PartClicked"/>
-            </div>
-        </Panel1>
-        <Panel2>
-            <FluentHorizontalScroll @ref="_horizontalScroll" View="HorizontalScrollView.Mobile" Style="--scroll-align: flex-start; padding: 10px">
-                @{
-                    foreach (var column in AppState.Project.SelectedSheet.Columns)
+    <div style="display: flex; width: 100vw;">
+        <div style="height: calc(-86px + 100vh); overflow: scroll; width: 380px; padding: 10px;">
+            @foreach (var sheet in AppState.Project.Sheets)
+            {
+                <SheetForm Sheet="sheet"/>
+                @foreach (var column in sheet.Columns)
+                {
+                    <ColumnHeader Column="column"/>
+                    @foreach (var part in column.Parts)
                     {
-                        <ColumnCard Column="column"/>
+                        <PartForm @ref="_partFormRef" Part="part"/>
                     }
                 }
-            </FluentHorizontalScroll>
-        </Panel2>
-    </FluentSplitter>
+
+                @if (sheet != AppState.Project.Sheets.Last())
+                {
+                    <hr style="margin: 10px;"/>
+                }
+            }
+        </div>
+        <div
+            style="height: calc(-86px + 100vh); overflow: scroll; width: calc(-360px + 100vw); padding: 10px; padding-left: 0px;">
+            @foreach (var sheet in AppState.Project.Sheets)
+            {
+                <SheetSVG Sheet="sheet" PartClicked="PartClicked"/>
+            }
+        </div>
+    </div>
 }
 
 @code
+
+
+
 {
-    FluentHorizontalScroll _horizontalScroll = default!;
-    FluentPopover _popover = default;
-    PartCard _partCard = default;
-    private Part _part = default;
-    private Column _col = default;
+    Dictionary<Part, PartForm> _partFormRefs = new Dictionary<Part, PartForm>();
+
+    PartForm _partFormRef
+    {
+        set { _partFormRefs.TryAdd(value.Part, value); }
+    }
 
     protected override void OnInitialized()
     {
@@ -38,8 +52,7 @@
 
     private async Task PartClicked(Part part)
     {
-        IDialogReference dialog = await DialogService.ShowDialogAsync<PartDialog>(part, new DialogParameters());
-        await dialog.Result;
-        //_horizontalScroll.ScrollInView(part.Parent.Pos());
+        _partFormRefs[part].Focus();
+        JsRuntime.InvokeAsync<object>("scrollIntoView", $"PartForm_{part.Id}");
     }
 }
