@@ -6,3 +6,7 @@ function saveAsFile(filename, bytesBase64) {
     link.click();
     document.body.removeChild(link);
 }
+
+function scrollIntoView(id) {
+    document.getElementById(id).scrollIntoView({ behavior: "instant", block: "center" });
+}
