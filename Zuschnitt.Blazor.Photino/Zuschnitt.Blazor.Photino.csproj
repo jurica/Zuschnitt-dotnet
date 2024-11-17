@@ -27,15 +27,15 @@
       </Content>
       <Content Include="..\Zuschnitt.Blazor.Wasm\wwwroot\favicon.ico">
         <Link>wwwroot\favicon.ico</Link>
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="..\Zuschnitt.Blazor.Wasm\wwwroot\icon-192.png">
         <Link>wwwroot\icon-192.png</Link>
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="..\Zuschnitt.Blazor.Wasm\wwwroot\js\saveAsFile.js">
         <Link>wwwroot\js\saveAsFile.js</Link>
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
     </ItemGroup>
 
