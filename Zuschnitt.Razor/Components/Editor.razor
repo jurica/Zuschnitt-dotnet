@@ -27,6 +27,7 @@
             style="height: calc(-86px + 100vh); overflow: scroll; width: calc(-360px + 100vw); padding: 10px; padding-left: 0px;">
             @foreach (var sheet in AppState.Project.Sheets)
             {
+                <FluentLabel Typo="Typography.H3" Alignment="HorizontalAlignment.Center">@sheet.Name (@sheet.Width x @sheet.Height)</FluentLabel>
                 <SheetSVG Sheet="sheet" PartClicked="PartClicked"/>
             }
         </div>
@@ -34,9 +35,6 @@
 }
 
 @code
-
-
-
 {
     Dictionary<Part, PartForm> _partFormRefs = new Dictionary<Part, PartForm>();
 

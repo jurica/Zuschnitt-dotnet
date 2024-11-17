@@ -2,7 +2,7 @@
 
 @if (Part != null)
 {
-    <div style="padding-left:5px; display: flex; justify-content: space-between; @(Part.Highlighted ? "background: #e0e0e0" : "")" @onmouseenter="HighlightOn" @onmouseleave="HighlightOff" id="PartForm_@Part.Id">
+    <div style="padding-left:5px; display: flex; justify-content: space-between;" @onmouseenter="HighlightOn" @onmouseleave="HighlightOff" id="PartForm_@Part.Id">
         <PartActions Part="Part"/>
         <FluentTextField @ref=_nameField Appearance="FluentInputAppearance.Outline" @bind-Value=Part.Name
                          Style="width: 200px;"></FluentTextField>
@@ -34,7 +34,6 @@
         Part.Highlighted = false;
         Part.Parent.Highlighted = false;
         Part.Parent.Parent.Highlighted = false;
-        AppState.StateHasChanged();
     }
 
     public void Focus()

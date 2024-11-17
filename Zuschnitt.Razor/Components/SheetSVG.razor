@@ -1,32 +1,29 @@
+@using Microsoft.FluentUI.AspNetCore.Components.Extensions
 @inject AppState AppState
 
 @if (Sheet != null)
 {
     <svg viewBox="0 0 @Sheet.Width @Sheet.Height">
         <defs>
-            <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%" spreadMethod="pad">
-                <stop offset="0%" stop-color="lightgrey" stop-opacity="0.1"></stop>
-                <stop offset="100%" stop-color="lightgrey" stop-opacity="0.25"></stop>
+            <linearGradient id="gradient-sheet" x1="0%" y1="0%" x2="100%" y2="100%" spreadMethod="pad">
+                <stop offset="0%" stop-color="@Color.Disabled.ToAttributeValue()" stop-opacity="0.1"></stop>
+                <stop offset="100%" stop-color="@Color.Disabled.ToAttributeValue()" stop-opacity="0.25"></stop>
             </linearGradient>
-            <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%" spreadMethod="pad">
-                <stop offset="0%" stop-color="#8A161B" stop-opacity="0.1"></stop>
-                <stop offset="100%" stop-color="#8A161B" stop-opacity="0.25"></stop>
+            <linearGradient id="gradient-column" x1="0%" y1="0%" x2="100%" y2="100%" spreadMethod="pad">
+                <stop offset="0%" stop-color="@Color.Fill.ToAttributeValue()" stop-opacity="0.1"></stop>
+                <stop offset="100%" stop-color="@Color.Fill.ToAttributeValue()" stop-opacity="0.25"></stop>
             </linearGradient>
-            <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="100%" spreadMethod="pad">
-                <stop offset="0%" stop-color="#B39100" stop-opacity="0.1"></stop>
-                <stop offset="100%" stop-color="#B39100" stop-opacity="0.25"></stop>
+            <linearGradient id="gradient-part" x1="0%" y1="0%" x2="100%" y2="100%" spreadMethod="pad">
+                <stop offset="0%" stop-color="@Color.Accent.ToAttributeValue()" stop-opacity="0.1"></stop>
+                <stop offset="100%" stop-color="@Color.Accent.ToAttributeValue()" stop-opacity="0.25"></stop>
             </linearGradient>
-            <linearGradient id="gradient3" x1="0%" y1="0%" x2="100%" y2="100%" spreadMethod="pad">
-                <stop offset="0%" stop-color="#00533F" stop-opacity="0.1"></stop>
-                <stop offset="100%" stop-color="#00533F" stop-opacity="0.25"></stop>
+            <linearGradient id="gradient-done" x1="0%" y1="0%" x2="100%" y2="100%" spreadMethod="pad">
+                <stop offset="0%" stop-color="@Color.Success.ToAttributeValue()" stop-opacity="0.25"></stop>
+                <stop offset="100%" stop-color="@Color.Success.ToAttributeValue()" stop-opacity="0.5"></stop>
             </linearGradient>
-            <linearGradient id="gradient4" x1="0%" y1="0%" x2="100%" y2="100%" spreadMethod="pad">
-                <stop offset="0%" stop-color="#AA5600" stop-opacity="0.1"></stop>
-                <stop offset="100%" stop-color="#AA5600" stop-opacity="0.25"></stop>
-            </linearGradient>
-            <linearGradient id="gradient5" x1="0%" y1="0%" x2="100%" y2="100%" spreadMethod="pad">
-                <stop offset="0%" stop-color="#6E3A68" stop-opacity="0.1"></stop>
-                <stop offset="100%" stop-color="#6E3A68" stop-opacity="0.25"></stop>
+            <linearGradient id="gradient-highlight" x1="0%" y1="0%" x2="100%" y2="100%" spreadMethod="pad">
+                <stop offset="0%" stop-color="@Color.Disabled.ToAttributeValue()" stop-opacity="0.5"></stop>
+                <stop offset="100%" stop-color="@Color.Disabled.ToAttributeValue()" stop-opacity="0.75"></stop>
             </linearGradient>
         </defs>
         <rect id="@Sheet.Id.ToString()" x="0" y="0" width="@Sheet.Width" height="@Sheet.Height" stroke="@_strokeColor"
@@ -66,21 +63,21 @@
 
     private string FillColor(Sheet sheet)
     {
-        if (sheet.Highlighted) return "url(#gradient5)";
-        return "url(#gradient)";
+        if (sheet.Highlighted) return "url(#gradient-highlight)";
+        return "url(#gradient-sheet)";
     }
 
     private string FillColor(Column column)
     {
-        if (column.Highlighted) return "url(#gradient5)";
-        return "url(#gradient2)";
+        if (column.Highlighted) return "url(#gradient-highlight)";
+        return "url(#gradient-column)";
     }
 
     private string FillColor(Part part)
     {
-        if (part.Highlighted) return "url(#gradient)";
-        if (part.Done) return "url(#gradient3)";
-        return "url(#gradient1)";
+        if (part.Highlighted) return "url(#gradient-highlight)";
+        if (part.Done) return "url(#gradient-done)";
+        return "url(#gradient-part)";
     }
 
     private void HighlightOn(Part part)

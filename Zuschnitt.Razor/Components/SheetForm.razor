@@ -2,11 +2,11 @@
 
 @if (Sheet != null)
 {
-    <div style="padding-left:5px; display: flex; justify-content: space-between; @(Sheet.Highlighted ? "background: #e0e0e0" : "")" @onmouseenter="HighlightOn" @onmouseleave="HighlightOff">
+    <div style="padding-left:5px; display: flex; justify-content: space-between;" @onmouseenter="HighlightOn" @onmouseleave="HighlightOff">
         <SheetActions Sheet="Sheet"/>
-        <FluentTextField @bind-Value=Sheet.Name Style="width: 200px"></FluentTextField>
-        <FluentNumberField @bind-Value=Sheet.Width Style="width: 60px;" HideStep="true"></FluentNumberField>
-        <FluentNumberField @bind-Value=Sheet.Height Style="width: 60px;" HideStep="true"></FluentNumberField>
+        <FluentTextField @bind-Value=Sheet.Name Style="width: 200px" @bind-Value:after="AppState.StateHasChanged"></FluentTextField>
+        <FluentNumberField @bind-Value=Sheet.Width Style="width: 60px;" HideStep="true" @bind-Value:after="AppState.StateHasChanged"></FluentNumberField>
+        <FluentNumberField @bind-Value=Sheet.Height Style="width: 60px;" HideStep="true" @bind-Value:after="AppState.StateHasChanged"></FluentNumberField>
     </div>
 }
 
@@ -24,7 +24,6 @@
     {
         if (Sheet == null) return;
         Sheet.Highlighted = false;
-        AppState.StateHasChanged();
     }
 
 }

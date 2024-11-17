@@ -2,10 +2,10 @@
 
 @if (Column != null)
 {
-    <div style="padding-left:5px; display: flex; align-items: center; @(Column.Highlighted ? "background: #e0e0e0" : "")" @onmouseenter="HighlightOn" @onmouseleave="HighlightOff">
+    <div style="padding-left:5px; display: flex; align-items: center; margin-top: 5px" @onmouseenter="HighlightOn" @onmouseleave="HighlightOff">
         <ColumnActions Column="Column"/>
-        <FluentLabel Typo="Typography.H5">Column
-            #@(Column.Pos() + 1) (@Column.Width()/@Column.Height())
+        <FluentLabel Typo="Typography.H4">Column
+            #@(Column.Pos() + 1) (@Column.Width() x @Column.Height())
         </FluentLabel>
     </div>
 }
@@ -26,7 +26,6 @@
         if (Column == null) return;
         Column.Highlighted = false;
         Column.Parent.Highlighted = false;
-        AppState.StateHasChanged();
     }
 
 }
