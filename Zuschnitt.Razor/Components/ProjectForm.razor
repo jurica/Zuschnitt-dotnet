@@ -1,0 +1,13 @@
+@if (Project != null)
+{
+<div style="padding-left:5px; display: flex;">
+    <ProjectActions/>
+    <FluentTextField Style="width: 320px"
+                     @bind-Value=Project.Name
+                     Placeholder="@Project.Id.ToString()"/>
+</div>
+}
+
+@code {
+    [Parameter] public Project? Project { get; set; }
+}

@@ -87,7 +87,7 @@
         part.Highlighted = true;
         part.Parent.Highlighted = false;
         part.Parent.Parent.Highlighted = true;
-        AppState.StateHasChanged();
+        //AppState.StateHasChanged();
     }
 
     private void HighlightOff(Part part)
@@ -95,33 +95,33 @@
         part.Highlighted = false;
         part.Parent.Highlighted = false;
         part.Parent.Parent.Highlighted = false;
-        AppState.StateHasChanged();
+        //AppState.StateHasChanged();
     }
 
     private void HighlightOn(Column column)
     {
         column.Highlighted = true;
         column.Parent.Highlighted = true;
-        AppState.StateHasChanged();
+        //AppState.StateHasChanged();
     }
 
     private void HighlightOff(Column column)
     {
         column.Highlighted = false;
         column.Parent.Highlighted = false;
-        AppState.StateHasChanged();
+        //AppState.StateHasChanged();
     }
 
     private void HighlightOn(Sheet sheet)
     {
         sheet.Highlighted = true;
-        AppState.StateHasChanged();
+        //AppState.StateHasChanged();
     }
 
     private void HighlightOff(Sheet sheet)
     {
         sheet.Highlighted = false;
-        AppState.StateHasChanged();
+        //AppState.StateHasChanged();
     }
 
 }
