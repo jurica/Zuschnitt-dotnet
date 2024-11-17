@@ -6,21 +6,24 @@
 
 <FluentLayout>
     <FluentHeader>
-        <FluentIcon Value="@(new Icons.Filled.Size32.Table())" Color="@Color.Fill" /> 
+        <FluentIcon Value="@(new Icons.Filled.Size32.Table())" Color="@Color.Fill"/>
         <FluentSpacer Width="10"/>
         Zuschnitt
     </FluentHeader>
-        <FluentBodyContent Class="content">
-            <ErrorBoundary>
-                <ChildContent>
-                    @Body
-                </ChildContent>
-                <ErrorContent Context="ex">
-                    <div class="blazor-error-boundary">@ex.Message</div>
-                </ErrorContent>
-            </ErrorBoundary>
-        </FluentBodyContent>
-    <FluentFooter><FluentSpacer/>© 2024 Jurica Bacurin</FluentFooter>
+    <FluentBodyContent Class="content">
+        <ErrorBoundary>
+            <ChildContent>
+                @Body
+            </ChildContent>
+            <ErrorContent Context="ex">
+                <div class="blazor-error-boundary">@ex.Message</div>
+            </ErrorContent>
+        </ErrorBoundary>
+    </FluentBodyContent>
+    <FluentFooter>
+        <FluentSpacer/>
+        © 2024 Jurica Bacurin
+    </FluentFooter>
 </FluentLayout>
 <FluentMenuProvider/>
 <FluentDialogProvider/>
