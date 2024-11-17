@@ -3,9 +3,9 @@
 @if (Part != null)
 {
     <div style="padding-left:5px; display: flex; justify-content: space-between;" id="PartForm_@Part.Id"
-         @onclick="HighlightOn"
-         @onfocusin="HighlightOn"
-         @onmouseenter="HighlightOn"
+         @onclick="() => HighlightOn(true)"
+         @onfocusin="() => HighlightOn(true)"
+         @onmouseenter="() => HighlightOn(false)"
          @onmouseleave="HighlightOff"
          @onfocusout="HighlightOff">
         <PartActions Part="Part"/>
@@ -25,11 +25,11 @@
     [Parameter] public EventCallback<Part> Focused { get; set; }
     FluentTextField _nameField = default!;
 
-    private void HighlightOn()
+    private void HighlightOn(bool focus)
     {
         if (Part == null) return;
+        if (focus) Focused.InvokeAsync(Part);
         if (Part.Highlighted) return;
-        Focused.InvokeAsync(Part);
         Part.Highlighted = true;
         Part.Parent.Highlighted = true;
         Part.Parent.Parent.Highlighted = true;

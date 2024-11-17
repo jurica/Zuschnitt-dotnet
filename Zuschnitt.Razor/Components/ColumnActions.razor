@@ -6,7 +6,6 @@
     <FluentMenu @bind-Open="_showMenu" Anchor="@_id">
         <ActionMenuItem OnClick="AddPart" Text="Add Part" Icon="@(new Icons.Regular.Size20.AddCircle())"/>
         <FluentDivider/>
-        <ActionMenuItem OnClick="AddColumn" Text="New Column" Icon="@(new Icons.Regular.Size20.New())"/>
         <ActionMenuItem OnClick="CopyColumn" Text="Duplicate Column" Icon="@(new Icons.Regular.Size20.Copy())"/>
         <FluentDivider/>
         @foreach (var sheet in Column.Parent.Parent.Sheets)
@@ -24,14 +23,6 @@
 
     private bool _showMenu = false;
     private string _id = Guid.NewGuid().ToString();
-
-    private void AddColumn()
-    {
-        _showMenu = false;
-        if (Column == null) return;
-        Column.Parent.AddColumn();
-        AppState.StateHasChanged();
-    }
 
     private void CopyColumn()
     {

@@ -8,6 +8,8 @@
     <FluentDivider/>
     <ActionMenuItem Icon="@(new Icons.Regular.Size20.Document())" OnClick="OpenFile" Text="Load Project"/>
     <ActionMenuItem Icon="@(new Icons.Regular.Size20.Save())" OnClick="SaveAs" Text="Save Project"/>
+    <FluentDivider/>
+    <ActionMenuItem Icon="@(new Icons.Regular.Size20.New())" OnClick="New" Text="New Project"/>
 </FluentMenu>
 
 @code {
@@ -37,6 +39,13 @@
     {
         _showMenu = false;
         AppState.Project.AddSheet();
+        AppState.StateHasChanged();
+    }
+
+    private void New()
+    {
+        _showMenu = false;
+        AppState.Project = new Project();
         AppState.StateHasChanged();
     }
 
