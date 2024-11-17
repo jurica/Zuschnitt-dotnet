@@ -16,7 +16,6 @@ public class Sheet
         {
             _parent = value;
             _parent._sheets.Add(this);
-            _parent.SelectedSheet = this;
         }
     }
     private Project _parent = null!;
@@ -28,12 +27,12 @@ public class Sheet
         }
     }
     [JsonInclude] internal List<Column> _columns { get; init; } = new();
+    [JsonIgnore] public bool Highlighted { get; set; } = false;
 
     public void Copy()
     {
         var copy = new Sheet() { Parent = Parent, Name = $"{Name} copy"};
         _columns.ForEach(c => c.CopyTo(copy));
-        Parent.SelectedSheet = copy;
     }
 
     public int UsedHeight()

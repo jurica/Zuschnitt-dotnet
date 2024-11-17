@@ -1,38 +1,89 @@
+@using Microsoft.FluentUI.AspNetCore.Components.Extensions
 @inject AppState AppState;
+@inject IJSRuntime JsRuntime;
 
-@if (AppState.Project.SelectedSheet != null)
+@if (AppState.Project != null)
 {
-    <FluentSplitter Orientation="Orientation.Horizontal" style="width: 100%; height: 100%">
-        <Panel1>
-            <div Style="padding: 10px;">
-                <SheetSelector Sheet="AppState.Project.SelectedSheet"/>
-                <SheetSVG Sheet="AppState.Project.SelectedSheet" PartClicked="PartClicked"/>
-            </div>
-        </Panel1>
-        <Panel2>
-            <FluentHorizontalScroll @ref="_horizontalScroll" View="HorizontalScrollView.Mobile" Style="--scroll-align: flex-start; padding: 10px">
-                @{
-                    foreach (var column in AppState.Project.SelectedSheet.Columns)
+    <div>
+        <div style="display: flex; width: 100vw;">
+            <div style="height: calc(-86px + 100vh); overflow: scroll; width: 375px; padding: 10px;">
+                <ProjectForm Project="AppState.Project"/>
+                <FluentDivider Style="margin-top: 10px; margin-bottom: 10px"/>
+                @foreach (var sheet in AppState.Project.Sheets)
+                {
+                    <SheetForm @ref="_sheetFormRef" Sheet="sheet" Focused="FormFocused"/>
+                    @foreach (var column in sheet.Columns)
                     {
-                        <ColumnCard Column="column"/>
+                        <ColumnHeader Column="column"/>
+                        @foreach (var part in column.Parts)
+                        {
+                            <PartForm @ref="_partFormRef" Part="part" Focused="FormFocused"/>
+                        }
+                    }
+
+                    @if (sheet != AppState.Project.Sheets.Last())
+                    {
+                        <hr style="margin: 10px; width: 97%"/>
                     }
                 }
-            </FluentHorizontalScroll>
-        </Panel2>
-    </FluentSplitter>
+            </div>
+            <div
+                style="height: calc(-86px + 100vh); overflow: scroll; width: calc(-360px + 100vw);">
+                @foreach (var sheet in AppState.Project.Sheets)
+                {
+                    <FluentLabel Typo="Typography.H3"
+                                 Alignment="HorizontalAlignment.Center">@sheet.Name (@sheet.Width x @sheet.Height)
+                    </FluentLabel>
+                    <div style="padding: 20px">
+                        <SheetSVG Sheet="sheet" PartClicked="PartClicked" SheetClicked="SheetClicked"/>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
 }
 
 @code
 {
-    FluentHorizontalScroll _horizontalScroll = default!;
+    Dictionary<Part, PartForm> _partFormRefs = new();
+
+    PartForm _partFormRef
+    {
+        set { _partFormRefs.TryAdd(value.Part, value); }
+    }
+
+    Dictionary<Sheet, SheetForm> _sheetFormRefs = new();
+
+    SheetForm _sheetFormRef
+    {
+        set { _sheetFormRefs.TryAdd(value.Sheet, value); }
+    }
 
     protected override void OnInitialized()
     {
         AppState.OnStateChange += StateHasChanged;
     }
 
-    public void PartClicked(Part part)
+    private async Task PartClicked(Part part)
     {
-        _horizontalScroll.ScrollInView(part.Parent.Pos());
+        _partFormRefs[part].Focus();
+        JsRuntime.InvokeAsync<object>("scrollIntoView", $"PartForm_{part.Id}");
     }
+
+    private async Task SheetClicked(Sheet sheet)
+    {
+        _sheetFormRefs[sheet].Focus();
+        JsRuntime.InvokeAsync<object>("scrollIntoView", $"SheetForm_{sheet.Id}");
+    }
+
+    private async Task FormFocused(Sheet sheet)
+    {
+        JsRuntime.InvokeAsync<object>("scrollIntoView", $"SheetRect_{sheet.Id}");
+    }
+   
+    private async Task FormFocused(Part part)
+    {
+        JsRuntime.InvokeAsync<object>("scrollIntoView", $"PartRect_{part.Id}");
+    }
+
 }

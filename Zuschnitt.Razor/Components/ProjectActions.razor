@@ -2,15 +2,17 @@
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JsRuntime
 
-<FluentButton Id="@_id" IconStart="@(new Icons.Regular.Size20.LineHorizontal3())" OnClick="() => _showMenu = !_showMenu"/>
+<FluentIcon Id="@_id" Value="@(new Icons.Regular.Size24.MoreVertical())" @onclick="() => _showMenu = !_showMenu"/>
 <FluentMenu @bind-Open="_showMenu" Anchor="@_id" VerticalThreshold="100">
-    <ActionMenuItem Icon="@(new Icons.Regular.Size20.Document())" OnClick="OpenFile" Text="Load"/>
-    <ActionMenuItem Icon="@(new Icons.Regular.Size20.Save())" OnClick="SaveAs" Text="Save"/>
+    <ActionMenuItem OnClick="AddSheet" Icon="@(new Icons.Regular.Size20.AddCircle())" Text="Add Sheet"/>
+    <FluentDivider/>
+    <ActionMenuItem Icon="@(new Icons.Regular.Size20.Document())" OnClick="OpenFile" Text="Load Project"/>
+    <ActionMenuItem Icon="@(new Icons.Regular.Size20.Save())" OnClick="SaveAs" Text="Save Project"/>
+    <FluentDivider/>
+    <ActionMenuItem Icon="@(new Icons.Regular.Size20.New())" OnClick="New" Text="New Project"/>
 </FluentMenu>
 
 @code {
-    [Parameter] public Column? Column { get; set; }
-
     private bool _showMenu = false;
     private string _id = Guid.NewGuid().ToString();
 
@@ -26,10 +28,25 @@
         string filename = "Zuschnitt";
         if (!string.IsNullOrEmpty(AppState.Project.Name)) filename = AppState.Project.Name;
         filename += ".zsn";
-        
+
         JsRuntime.InvokeAsync<object>(
             "saveAsFile",
             filename,
             Convert.ToBase64String(AppState.Project.Serialize()));
     }
+   
+    private void AddSheet()
+    {
+        _showMenu = false;
+        AppState.Project.AddSheet();
+        AppState.StateHasChanged();
+    }
+
+    private void New()
+    {
+        _showMenu = false;
+        AppState.Project = new Project();
+        AppState.StateHasChanged();
+    }
+
 }

@@ -1,0 +1,31 @@
+@inject  AppState AppState
+
+@if (Column != null)
+{
+    <div style="padding-left:5px; display: flex; align-items: center; height: 32px;" @onmouseenter="HighlightOn" @onmouseleave="HighlightOff">
+        <ColumnActions Column="Column"/>
+        <FluentLabel Typo="Typography.H4">Column
+            #@(Column.Pos() + 1) (@Column.Width() x @Column.Height())
+        </FluentLabel>
+    </div>
+}
+
+@code {
+    [Parameter] public Column? Column { get; set; }
+
+    private void HighlightOn()
+    {
+        if (Column == null) return;
+        Column.Highlighted = true;
+        Column.Parent.Highlighted = true;
+        AppState.StateHasChanged();
+    }
+
+    private void HighlightOff()
+    {
+        if (Column == null) return;
+        Column.Highlighted = false;
+        Column.Parent.Highlighted = false;
+    }
+
+}

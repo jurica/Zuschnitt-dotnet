@@ -6,8 +6,9 @@
 
 <FluentLayout>
     <FluentHeader>
-        <ProjectActions/>
-        <FluentTextField @bind-Value=AppState.Project.Name Style="width: 100%;"></FluentTextField>
+        <FluentIcon Value="@(new Icons.Filled.Size32.Table())" Color="@Color.Fill"/>
+        <FluentSpacer Width="10"/>
+        Zuschnitt
     </FluentHeader>
     <FluentBodyContent Class="content">
         <ErrorBoundary>
@@ -19,6 +20,10 @@
             </ErrorContent>
         </ErrorBoundary>
     </FluentBodyContent>
-    <FluentFooter><FluentSpacer/>© 2024 Jurica Bacurin</FluentFooter>
+    <FluentFooter>
+        <FluentSpacer/>
+        © 2024 Jurica Bacurin
+    </FluentFooter>
 </FluentLayout>
 <FluentMenuProvider/>
+<FluentDialogProvider/>

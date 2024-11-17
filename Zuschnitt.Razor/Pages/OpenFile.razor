@@ -10,7 +10,7 @@
                  DragDropZoneVisible="false"
                  Mode="InputFileMode.SaveToTemporaryFolder"
                  Multiple="false"
-                 MaximumFileSize="@(20 * 1024)"
+                 MaximumFileSize="@(2000 * 1024)"
                  AnchorId="SelectFileButton"
                  Accept=".zsn, .json"
                  OnProgressChange="@(e => { _progressPercent = e.ProgressPercent; _progressTitle = e.ProgressTitle; })"

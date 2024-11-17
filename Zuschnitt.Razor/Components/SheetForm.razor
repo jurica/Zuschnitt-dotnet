@@ -1,0 +1,52 @@
+@inject AppState AppState
+
+@if (Sheet != null)
+{
+    <div style="padding-left:5px; display: flex;" id="SheetForm_@Sheet.Id"
+         @onclick="() => HighlightOn(true)"
+         @onfocusin="() => HighlightOn(true)"
+         @onmouseenter="() => HighlightOn(false)"
+         @onmouseleave="HighlightOff"
+         @onfocusout="HighlightOff">
+        <SheetActions Sheet="Sheet"/>
+        <FluentTextField @ref="_nameField" @bind-Value=Sheet.Name Style="width: 200px"
+                         @onclick="() => Focused.InvokeAsync(Sheet)"
+                         @onfocusin="() => Focused.InvokeAsync(Sheet)"
+                         @bind-Value:after="AppState.StateHasChanged" Placeholder="@Sheet.Id.ToString()"/>
+        <FluentNumberField @bind-Value=Sheet.Width Style="width: 60px;" HideStep="true"
+                           @onclick="() => Focused.InvokeAsync(Sheet)"
+                           @onfocusin="() => Focused.InvokeAsync(Sheet)"
+                           @bind-Value:after="AppState.StateHasChanged"></FluentNumberField>
+        <FluentNumberField @bind-Value=Sheet.Height Style="width: 60px;" HideStep="true"
+                           @onclick="() => Focused.InvokeAsync(Sheet)"
+                           @onfocusin="() => Focused.InvokeAsync(Sheet)"
+                           @bind-Value:after="AppState.StateHasChanged"></FluentNumberField>
+    </div>
+}
+
+@code {
+    [Parameter] public Sheet? Sheet { get; set; }
+    [Parameter] public EventCallback<Sheet> Focused { get; set; }
+    FluentTextField _nameField = default!;
+
+    private void HighlightOn(bool focus)
+    {
+        if (Sheet == null) return;
+        if (focus) Focused.InvokeAsync(Sheet);
+        if (Sheet.Highlighted) return;
+        Sheet.Highlighted = true;
+        AppState.StateHasChanged();
+    }
+
+    private void HighlightOff()
+    {
+        if (Sheet == null) return;
+        Sheet.Highlighted = false;
+    }
+
+    public void Focus()
+    {
+        _nameField.FocusAsync();
+    }
+
+}

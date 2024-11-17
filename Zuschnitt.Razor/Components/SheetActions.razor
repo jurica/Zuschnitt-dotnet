@@ -2,18 +2,11 @@
 
 @if (Sheet != null)
 {
-    <FluentButton Id="@_id" IconStart="@(new Icons.Regular.Size20.LineHorizontal3())" OnClick="() => _showMenu = !_showMenu"/>
+    <FluentIcon Id="@_id" Value="@(new Icons.Regular.Size24.MoreVertical())" @onclick="() => _showMenu = !_showMenu"/>
     <FluentMenu @bind-Open="_showMenu" Anchor="@_id">
         <ActionMenuItem OnClick="AddColumn" Icon="@(new Icons.Regular.Size20.AddCircle())" Text="Add Column"/>
         <FluentDivider/>
-        <ActionMenuItem OnClick="AddSheet" Icon="@(new Icons.Regular.Size20.New())" Text="New sheet"/>
         <ActionMenuItem OnClick="CopySheet" Icon="@(new Icons.Regular.Size20.Copy())" Text="Duplicate Sheet"/>
-        <FluentDivider/>
-        @foreach (var sheet in Sheet.Parent.Sheets)
-        {
-            if (sheet == Sheet) continue;
-            <ActionMenuItem OnClick="() => SelectSheet(sheet)" Icon="@(new Icons.Regular.Size20.LayoutColumnTwoSplitRight())" Text="@($"Select: {sheet.Name}")"/>
-        }
         <FluentDivider/>
         <ActionMenuItem OnClick="DeleteCurrentSheet" Icon="@(new Icons.Regular.Size20.Delete())" Text="Delete sheet"/>
     </FluentMenu>
@@ -34,27 +27,11 @@
         AppState.StateHasChanged();
     }
 
-    private void AddSheet()
-    {
-        _showMenu = false;
-        if (Sheet == null) return;
-        Sheet.Parent.AddSheet();
-        AppState.StateHasChanged();
-    }
-
     private void CopySheet()
     {
         _showMenu = false;
         if (Sheet == null) return;
         Sheet.Copy();
-        AppState.StateHasChanged();
-    }
-
-    private void SelectSheet(Sheet sheet)
-    {
-        _showMenu = false;
-        if (Sheet == null) return;
-        Sheet.Parent.SelectedSheet = sheet;
         AppState.StateHasChanged();
     }
 

@@ -1,16 +1,52 @@
+@using Microsoft.FluentUI.AspNetCore.Components.Extensions
+@inject AppState AppState
+
 @if (Sheet != null)
 {
     <svg viewBox="0 0 @Sheet.Width @Sheet.Height">
-        <rect id="@Sheet.Id.ToString()" x="0" y="0" width="@Sheet.Width" height="@Sheet.Height" stroke="@_strokeColor" stroke-width="1" fill="@FillColor(Sheet)"/>
+        <defs>
+            <linearGradient id="gradient-sheet" x1="0%" y1="0%" x2="100%" y2="100%" spreadMethod="pad">
+                <stop offset="0%" stop-color="@Color.Disabled.ToAttributeValue()" stop-opacity="0.1"></stop>
+                <stop offset="100%" stop-color="@Color.Disabled.ToAttributeValue()" stop-opacity="0.25"></stop>
+            </linearGradient>
+            <linearGradient id="gradient-column" x1="0%" y1="0%" x2="100%" y2="100%" spreadMethod="pad">
+                <stop offset="0%" stop-color="@Color.Fill.ToAttributeValue()" stop-opacity="0.1"></stop>
+                <stop offset="100%" stop-color="@Color.Fill.ToAttributeValue()" stop-opacity="0.25"></stop>
+            </linearGradient>
+            <linearGradient id="gradient-part" x1="0%" y1="0%" x2="100%" y2="100%" spreadMethod="pad">
+                <stop offset="0%" stop-color="@Color.Accent.ToAttributeValue()" stop-opacity="0.1"></stop>
+                <stop offset="100%" stop-color="@Color.Accent.ToAttributeValue()" stop-opacity="0.25"></stop>
+            </linearGradient>
+            <linearGradient id="gradient-done" x1="0%" y1="0%" x2="100%" y2="100%" spreadMethod="pad">
+                <stop offset="0%" stop-color="@Color.Success.ToAttributeValue()" stop-opacity="0.25"></stop>
+                <stop offset="100%" stop-color="@Color.Success.ToAttributeValue()" stop-opacity="0.5"></stop>
+            </linearGradient>
+            <linearGradient id="gradient-highlight" x1="0%" y1="0%" x2="100%" y2="100%" spreadMethod="pad">
+                <stop offset="0%" stop-color="@Color.Disabled.ToAttributeValue()" stop-opacity="0.5"></stop>
+                <stop offset="100%" stop-color="@Color.Disabled.ToAttributeValue()" stop-opacity="0.75"></stop>
+            </linearGradient>
+        </defs>
+        <rect id="SheetRect_@Sheet.Id.ToString()" x="0" y="0" width="@Sheet.Width" height="@Sheet.Height" stroke="@_strokeColor"
+              stroke-width="1" fill="@FillColor(Sheet)"
+              @onmouseleave="() => HighlightOff(Sheet)"
+              @onmouseenter="() => HighlightOn(Sheet)"
+              @onclick="() => SheetClicked.InvokeAsync(Sheet)"/>
         @{
             int x = 0;
             foreach (var column in Sheet.Columns)
             {
-                <rect id="@column.Id.ToString()" x="@x" y="0" width="@column.Width()" height="@Sheet.Height" stroke="@_strokeColor" stroke-width="1" fill="@FillColor(column)" fill-opacity="@FillOpacity(column)" @onmouseleave="() => column.Highlighted = false" @onmouseenter="() => column.Highlighted = true"/>
+                <rect id="ColumnRect_@column.Id.ToString()" x="@x" y="0" width="@column.Width()" height="@Sheet.Height"
+                      stroke="@_strokeColor" stroke-width="1" fill="@FillColor(column)"
+                      @onmouseleave="() => HighlightOff(column)"
+                      @onmouseenter="() => HighlightOn(column)"/>
                 int y = 0;
                 foreach (var part in column.Parts)
                 {
-                    <rect id="@part.Id.ToString()" x="@x" y="@y" width="@part.Width" height="@part.Height" stroke="@_strokeColor" stroke-width="1" fill="@FillColor(part)" fill-opacity="@FillOpacity(part)" @onmouseleave="() => part.Highlighted = false" @onmouseenter="() => part.Highlighted = true" @onclick="() => PartClicked.InvokeAsync(part)" @oncontextmenu:preventDefault="true"/>
+                    <rect id="PartRect_@part.Id.ToString()" x="@x" y="@y" width="@part.Width" height="@part.Height"
+                          stroke="@_strokeColor" stroke-width="1" fill="@FillColor(part)"
+                          @onmouseleave="() => HighlightOff(part)"
+                          @onmouseenter="() => HighlightOn(part)" @onclick="() => PartClicked.InvokeAsync(part)"
+                          @oncontextmenu:preventDefault="true"/>
                     y += part.Height;
                 }
 
@@ -23,35 +59,69 @@
 @code {
     [Parameter] public Sheet? Sheet { get; set; }
     [Parameter] public EventCallback<Part> PartClicked { get; set; }
+    [Parameter] public EventCallback<Sheet> SheetClicked { get; set; }
 
     private string _strokeColor = "black";
 
     private string FillColor(Sheet sheet)
     {
-        return "lightgrey";
+        if (sheet.Highlighted) return "url(#gradient-highlight)";
+        return "url(#gradient-sheet)";
     }
 
     private string FillColor(Column column)
     {
-        return "purple";
-    }
-
-    private string FillOpacity(Column column)
-    {
-        if (column.Highlighted) return "0.5";
-        return "0.1";
+        if (column.Highlighted) return "url(#gradient-highlight)";
+        return "url(#gradient-column)";
     }
 
     private string FillColor(Part part)
     {
-        if (part.Done) return "blue";
-        return "green";
+        if (part.Highlighted) return "url(#gradient-highlight)";
+        if (part.Done) return "url(#gradient-done)";
+        return "url(#gradient-part)";
     }
 
-    private string FillOpacity(Part part)
+    private void HighlightOn(Part part)
     {
-        if (part.Highlighted) return "0.5";
-        return "0.1";
+        part.Highlighted = true;
+        part.Parent.Highlighted = false;
+        part.Parent.Parent.Highlighted = true;
+        //AppState.StateHasChanged();
+    }
+
+    private void HighlightOff(Part part)
+    {
+        part.Highlighted = false;
+        part.Parent.Highlighted = false;
+        part.Parent.Parent.Highlighted = false;
+        //AppState.StateHasChanged();
+    }
+
+    private void HighlightOn(Column column)
+    {
+        column.Highlighted = true;
+        column.Parent.Highlighted = true;
+        //AppState.StateHasChanged();
+    }
+
+    private void HighlightOff(Column column)
+    {
+        column.Highlighted = false;
+        column.Parent.Highlighted = false;
+        //AppState.StateHasChanged();
+    }
+
+    private void HighlightOn(Sheet sheet)
+    {
+        sheet.Highlighted = true;
+        //AppState.StateHasChanged();
+    }
+
+    private void HighlightOff(Sheet sheet)
+    {
+        sheet.Highlighted = false;
+        //AppState.StateHasChanged();
     }
 
 }
