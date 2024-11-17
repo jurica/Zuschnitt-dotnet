@@ -1,46 +1,66 @@
+@using Microsoft.FluentUI.AspNetCore.Components.Extensions
 @inject AppState AppState;
 @inject IJSRuntime JsRuntime;
 
 @if (AppState.Project != null)
 {
-    <div style="display: flex; width: 100vw;">
-        <div style="height: calc(-86px + 100vh); overflow: scroll; width: 380px; padding: 10px;">
-            @foreach (var sheet in AppState.Project.Sheets)
-            {
-                <SheetForm Sheet="sheet"/>
-                @foreach (var column in sheet.Columns)
+    <div>
+        <div style="display: flex; width: 100vw;">
+            <div style="height: calc(-86px + 100vh); overflow: scroll; width: 380px; padding: 10px;">
+                <div style="padding-left:5px; display: flex;">
+                    <ProjectActions/>
+                    <FluentTextField @bind-Value=AppState.Project.Name Style="width: 320px"
+                                     Placeholder="@AppState.Project.Id.ToString()"/>
+                </div>
+                <FluentDivider Style="margin-top: 10px; margin-bottom: 10px"/>
+                @foreach (var sheet in AppState.Project.Sheets)
                 {
-                    <ColumnHeader Column="column"/>
-                    @foreach (var part in column.Parts)
+                    <SheetForm @ref="_sheetFormRef" Sheet="sheet" Focused="FormFocused"/>
+                    @foreach (var column in sheet.Columns)
                     {
-                        <PartForm @ref="_partFormRef" Part="part"/>
+                        <ColumnHeader Column="column"/>
+                        @foreach (var part in column.Parts)
+                        {
+                            <PartForm @ref="_partFormRef" Part="part" Focused="FormFocused"/>
+                        }
+                    }
+
+                    @if (sheet != AppState.Project.Sheets.Last())
+                    {
+                        <hr style="margin: 10px; width: 97%"/>
                     }
                 }
-
-                @if (sheet != AppState.Project.Sheets.Last())
+            </div>
+            <div
+                style="height: calc(-86px + 100vh); overflow: scroll; width: calc(-360px + 100vw);">
+                @foreach (var sheet in AppState.Project.Sheets)
                 {
-                    <hr style="margin: 10px;"/>
+                    <FluentLabel Typo="Typography.H3"
+                                 Alignment="HorizontalAlignment.Center">@sheet.Name (@sheet.Width x @sheet.Height)
+                    </FluentLabel>
+                    <div style="padding: 20px">
+                        <SheetSVG Sheet="sheet" PartClicked="PartClicked" SheetClicked="SheetClicked"/>
+                    </div>
                 }
-            }
-        </div>
-        <div
-            style="height: calc(-86px + 100vh); overflow: scroll; width: calc(-360px + 100vw); padding: 10px; padding-left: 0px;">
-            @foreach (var sheet in AppState.Project.Sheets)
-            {
-                <FluentLabel Typo="Typography.H3" Alignment="HorizontalAlignment.Center">@sheet.Name (@sheet.Width x @sheet.Height)</FluentLabel>
-                <SheetSVG Sheet="sheet" PartClicked="PartClicked"/>
-            }
+            </div>
         </div>
     </div>
 }
 
 @code
 {
-    Dictionary<Part, PartForm> _partFormRefs = new Dictionary<Part, PartForm>();
+    Dictionary<Part, PartForm> _partFormRefs = new();
 
     PartForm _partFormRef
     {
         set { _partFormRefs.TryAdd(value.Part, value); }
+    }
+
+    Dictionary<Sheet, SheetForm> _sheetFormRefs = new();
+
+    SheetForm _sheetFormRef
+    {
+        set { _sheetFormRefs.TryAdd(value.Sheet, value); }
     }
 
     protected override void OnInitialized()
@@ -53,4 +73,21 @@
         _partFormRefs[part].Focus();
         JsRuntime.InvokeAsync<object>("scrollIntoView", $"PartForm_{part.Id}");
     }
+
+    private async Task SheetClicked(Sheet sheet)
+    {
+        _sheetFormRefs[sheet].Focus();
+        JsRuntime.InvokeAsync<object>("scrollIntoView", $"SheetForm_{sheet.Id}");
+    }
+
+    private async Task FormFocused(Sheet sheet)
+    {
+        JsRuntime.InvokeAsync<object>("scrollIntoView", $"SheetRect_{sheet.Id}");
+    }
+   
+    private async Task FormFocused(Part part)
+    {
+        JsRuntime.InvokeAsync<object>("scrollIntoView", $"PartRect_{part.Id}");
+    }
+
 }

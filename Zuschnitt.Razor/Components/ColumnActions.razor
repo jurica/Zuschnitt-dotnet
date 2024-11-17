@@ -2,7 +2,7 @@
 
 @if (Column != null)
 {
-    <FluentIcon Id="@_id" Value="@(new Icons.Regular.Size20.MoreVertical())" @onclick="() => _showMenu = !_showMenu"/>
+    <FluentIcon Id="@_id" Value="@(new Icons.Regular.Size24.MoreVertical())" @onclick="() => _showMenu = !_showMenu"/>
     <FluentMenu @bind-Open="_showMenu" Anchor="@_id">
         <ActionMenuItem OnClick="AddPart" Text="Add Part" Icon="@(new Icons.Regular.Size20.AddCircle())"/>
         <FluentDivider/>

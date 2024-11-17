@@ -26,22 +26,23 @@
                 <stop offset="100%" stop-color="@Color.Disabled.ToAttributeValue()" stop-opacity="0.75"></stop>
             </linearGradient>
         </defs>
-        <rect id="@Sheet.Id.ToString()" x="0" y="0" width="@Sheet.Width" height="@Sheet.Height" stroke="@_strokeColor"
+        <rect id="SheetRect_@Sheet.Id.ToString()" x="0" y="0" width="@Sheet.Width" height="@Sheet.Height" stroke="@_strokeColor"
               stroke-width="1" fill="@FillColor(Sheet)"
               @onmouseleave="() => HighlightOff(Sheet)"
-              @onmouseenter="() => HighlightOn(Sheet)"/>
+              @onmouseenter="() => HighlightOn(Sheet)"
+              @onclick="() => SheetClicked.InvokeAsync(Sheet)"/>
         @{
             int x = 0;
             foreach (var column in Sheet.Columns)
             {
-                <rect id="@column.Id.ToString()" x="@x" y="0" width="@column.Width()" height="@Sheet.Height"
+                <rect id="ColumnRect_@column.Id.ToString()" x="@x" y="0" width="@column.Width()" height="@Sheet.Height"
                       stroke="@_strokeColor" stroke-width="1" fill="@FillColor(column)"
                       @onmouseleave="() => HighlightOff(column)"
                       @onmouseenter="() => HighlightOn(column)"/>
                 int y = 0;
                 foreach (var part in column.Parts)
                 {
-                    <rect id="@part.Id.ToString()" x="@x" y="@y" width="@part.Width" height="@part.Height"
+                    <rect id="PartRect_@part.Id.ToString()" x="@x" y="@y" width="@part.Width" height="@part.Height"
                           stroke="@_strokeColor" stroke-width="1" fill="@FillColor(part)"
                           @onmouseleave="() => HighlightOff(part)"
                           @onmouseenter="() => HighlightOn(part)" @onclick="() => PartClicked.InvokeAsync(part)"
@@ -58,6 +59,7 @@
 @code {
     [Parameter] public Sheet? Sheet { get; set; }
     [Parameter] public EventCallback<Part> PartClicked { get; set; }
+    [Parameter] public EventCallback<Sheet> SheetClicked { get; set; }
 
     private string _strokeColor = "black";
 
@@ -83,7 +85,7 @@
     private void HighlightOn(Part part)
     {
         part.Highlighted = true;
-        part.Parent.Highlighted = true;
+        part.Parent.Highlighted = false;
         part.Parent.Parent.Highlighted = true;
         AppState.StateHasChanged();
     }

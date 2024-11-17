@@ -2,10 +2,15 @@
 
 @if (Part != null)
 {
-    <div style="padding-left:5px; display: flex; justify-content: space-between;" @onmouseenter="HighlightOn" @onmouseleave="HighlightOff" id="PartForm_@Part.Id">
+    <div style="padding-left:5px; display: flex; justify-content: space-between;" id="PartForm_@Part.Id"
+         @onclick="HighlightOn"
+         @onfocusin="HighlightOn"
+         @onmouseenter="HighlightOn"
+         @onmouseleave="HighlightOff"
+         @onfocusout="HighlightOff">
         <PartActions Part="Part"/>
         <FluentTextField @ref=_nameField Appearance="FluentInputAppearance.Outline" @bind-Value=Part.Name
-                         Style="width: 200px;"></FluentTextField>
+                         Style="width: 200px;" Placeholder="@Part.Id.ToString()"/>
         <FluentNumberField Appearance="FluentInputAppearance.Outline" @bind-Value=Part.Width
                            @bind-Value:after="AppState.StateHasChanged"
                            Style="width: 60px" HideStep="true"/>
@@ -17,11 +22,14 @@
 
 @code {
     [Parameter] public Part? Part { get; set; }
+    [Parameter] public EventCallback<Part> Focused { get; set; }
     FluentTextField _nameField = default!;
 
     private void HighlightOn()
     {
         if (Part == null) return;
+        if (Part.Highlighted) return;
+        Focused.InvokeAsync(Part);
         Part.Highlighted = true;
         Part.Parent.Highlighted = true;
         Part.Parent.Parent.Highlighted = true;
@@ -31,6 +39,7 @@
     private void HighlightOff()
     {
         if (Part == null) return;
+        if (!Part.Highlighted) return;
         Part.Highlighted = false;
         Part.Parent.Highlighted = false;
         Part.Parent.Parent.Highlighted = false;
