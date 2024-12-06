@@ -1,9 +1,17 @@
 @using Microsoft.FluentUI.AspNetCore.Components.Extensions
+@using Zuschnitt.Razor.Components.SVG
+@using Zuschnitt.Razor.Services
+
 @inject AppState AppState
+@inject MouseService MouseService
 
 @if (Sheet != null)
 {
-    <svg viewBox="0 0 @Sheet.Width @Sheet.Height">
+    <svg viewBox="0 0 @Sheet.Width @Sheet.Height"
+         @onmousemove=@(e => MouseService.FireMove(this, e))
+         @onmouseup=@(e => MouseService.FireUp(this, e))
+         @onmouseleave=@(e => MouseService.FireLeave(this, e))
+         >
         <defs>
             <linearGradient id="gradient-sheet" x1="0%" y1="0%" x2="100%" y2="100%" spreadMethod="pad">
                 <stop offset="0%" stop-color="@Color.Disabled.ToAttributeValue()" stop-opacity="0.1"></stop>
@@ -42,11 +50,7 @@
                 int y = 0;
                 foreach (var part in column.Parts)
                 {
-                    <rect id="PartRect_@part.Id.ToString()" x="@x" y="@y" width="@part.Width" height="@part.Height"
-                          stroke="@_strokeColor" stroke-width="1" fill="@FillColor(part)"
-                          @onmouseleave="() => HighlightOff(part)"
-                          @onmouseenter="() => HighlightOn(part)" @onclick="() => PartClicked.InvokeAsync(part)"
-                          @oncontextmenu:preventDefault="true"/>
+                    <PartRect Part=part X=x Y=y/>
                     y += part.Height;
                 }
 

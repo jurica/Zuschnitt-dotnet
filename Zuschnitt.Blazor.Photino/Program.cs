@@ -4,6 +4,7 @@ using Microsoft.FluentUI.AspNetCore.Components;
 using Photino.Blazor;
 using Zuschnitt.Razor;
 using Zuschnitt.Models;
+using Zuschnitt.Razor.Services;
 
 namespace Zuschnitt.Blazor.Photino
 {
@@ -22,6 +23,7 @@ namespace Zuschnitt.Blazor.Photino
 
             builder.Services.AddFluentUIComponents();
             builder.Services.AddSingleton<AppState>();
+            builder.Services.AddSingleton<MouseService>().AddSingleton<IMouseService>(ff => ff.GetRequiredService<MouseService>());
 
             var app = builder.Build();
 
